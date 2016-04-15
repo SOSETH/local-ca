@@ -4,7 +4,7 @@ This role provides a local (i.e. on the node that executes ansible) CA.
 
 ## How to use this?
 In your meta/main.yml, you depend on this role, like so:
-> - { role: local-ca, caname: <name>, <params> }
+` - { role: local-ca, caname: <name>, <params> } `
 
 caname is the name of the local ca.
 params can be one or more of the following:
@@ -24,7 +24,7 @@ params can be one or more of the following:
 	* dest (required): destination(pem)
 
 Example:
-> - { role: local-ca, caname: logstash, server: { cert: /etc/haproxy/srv.crt, key: /etc/haproxy/srv.key, cn: {{ansible_nodename}} }, ca: { cert: /etc/haproxy/ca.crt } }
+` - { role: local-ca, caname: logstash, server: { cert: /etc/haproxy/srv.crt, key: /etc/haproxy/srv.key, cn: {{ansible_nodename}} }, ca: { cert: /etc/haproxy/ca.crt } } `
 
 ## Rationale
 
