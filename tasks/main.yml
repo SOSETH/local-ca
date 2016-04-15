@@ -1,0 +1,29 @@
+---
+  - fail: msg="You need to set caname, see README.md"
+    when: caname is not defined
+
+  - name: Set work dir
+    set_fact:
+      workdir: "/tmp/aca_{{ caname }}"
+
+  - name: Build local infrastructure
+    include: build.yml
+
+  - name: Handle server certificate request
+    include: server.yml
+    when: server is defined
+
+  - name: Handle client certificate request
+    include: client.yml
+    when: client is defined
+
+  - name: Handle DH parameters request
+    include: dhparam.yml
+    when: dhparam is defined
+
+  - name: Handle ca information request
+    include: ca.yml
+    when: ca is defined
+
+  - name: Teardown local infrastructure
+    include: destroy.yml

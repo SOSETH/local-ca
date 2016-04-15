@@ -1,0 +1,11 @@
+---
+  - name: Store secrets
+    local_action: shell tar -cf {{ role_path }}/{{ caname }}.tar .
+    args:
+      chdir: /tmp/aca_{{ caname }}
+    register: tarout
+    changed_when: False
+
+  - name: Remove temp dir
+    local_action: file dest=/tmp/aca_{{ caname }} state=absent
+    changed_when: False

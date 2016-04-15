@@ -1,0 +1,13 @@
+---
+  - name: Check if DH parameters exist
+    local_action: stat path="{{ workdir }}/{{ ansible_nodename }}-dh.pem"
+    register: dhfile
+    changed_when: False
+
+  - name: Generate DH parameters
+    local_action: command openssl dhparam -outform PEM -out "{{ workdir }}/{{ ansible_nodename }}-dh.pem" {{ lca_dhparam_size }}
+    when: not dhfile.stat.exists
+
+  - name: Copy DH parameters to server
+    copy: src="{{ workdir }}/{{ansible_nodename}}-dh.pem" dest="{{ dhparam.dest }}"
+    when: not dhfile.stat.exists

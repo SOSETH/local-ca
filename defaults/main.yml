@@ -1,0 +1,4 @@
+---
+lca_dhparam_size: 2048
+
+# Most options are inside the CA tar
