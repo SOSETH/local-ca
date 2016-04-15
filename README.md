@@ -8,19 +8,19 @@ In your meta/main.yml, you depend on this role, like so:
 
 caname is the name of the local ca.
 params can be one or more of the following:
-* server Generate a server certificate. Arguments:
+* server: Generate a server certificate. Arguments:
 	* cert (required): path to certificate on target node (pem)
 	* key (required): path to key on target node (pem, unencrypted)
 	* cn (required): Common Name
 	* san (optional): SAN in openssl cmdline format.
-* ca Copy CA certificate to node
+* ca: Copy CA certificate to node
   * cert (required): destination
 	* crl (optional): destination for CRL. The CRL gets regenerated each time this role is invoked.
-* client
+* client: Generate a client certificate. Arguments:
   * cert (required): path to certificate on target node (pem)
 	* key (required): path to key on target node (pem, unencrypted)
 	* cn (required): Common Name
-* dhparm Generate dhparam on ansible client
+* dhparm: Generate dhparam on ansible client
 	* dest (required): destination(pem)
 
 Example:
