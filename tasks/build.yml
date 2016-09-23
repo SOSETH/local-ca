@@ -18,7 +18,6 @@
   # Don't try to use mode on unarchive. It's incredibly broken
   - name: Fix permissions
     local_action: command chmod -R a+r . chdir="{{ workdir }}"
-    changed_when: False
 
   - name: Check if CA is initialized
     local_action: stat path="{{ workdir }}/pki"
