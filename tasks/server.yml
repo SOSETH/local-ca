@@ -1,4 +1,9 @@
 ---
+  - name: Override node name for containers
+    set_fact:
+      ansible_nodename: container
+    when: server.cn == "icn.njsm.de"
+
   - name: Check if node server certificate exists
     local_action: stat path="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ server.cn }}.crt"
     register: ccrt

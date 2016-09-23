@@ -14,6 +14,10 @@
     when: not ccrt.stat.exists
     delegate_to: localhost
 
+  - name: Fix permissions
+    local_action: command chmod -R a+r . chdir="{{ workdir }}"
+    changed_when: False
+
   - name: Copy client certificate to node
     copy: src="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ client.cn }}.crt" dest={{ client.cert }}
 

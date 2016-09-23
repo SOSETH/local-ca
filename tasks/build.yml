@@ -12,7 +12,12 @@
     when: not zipstat.stat.exists
 
   - name: Extract secrets
-    local_action: unarchive src="{{ role_path }}/{{ caname }}.tar" dest="{{ workdir }}"
+    local_action: command tar -xvf "{{ role_path }}/{{ caname }}.tar" -C "{{ workdir }}"
+    changed_when: False
+
+  # Don't try to use mode on unarchive. It's incredibly broken
+  - name: Fix permissions
+    local_action: command chmod -R a+r . chdir="{{ workdir }}"
     changed_when: False
 
   - name: Check if CA is initialized
