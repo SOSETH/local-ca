@@ -16,6 +16,10 @@
   - name: Handle client certificate request
     include: client.yml
     when: client is defined
+    
+  - name: Handle dual certificate request
+    include: both.yml
+    when: both is defined
 
   - name: Handle DH parameters request
     include: dhparam.yml

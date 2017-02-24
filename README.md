@@ -13,6 +13,7 @@ params can be one or more of the following:
 	* key (required): path to key on target node (pem, unencrypted)
 	* cn (required): Common Name
 	* san (optional): SAN in openssl cmdline format.
+* both: Generate a server certificate that can also be used as a client certificate. Parameters are the same as server.
 * ca: Copy CA certificate to node
   * cert (required): destination
 	* crl (optional): destination for CRL. The CRL gets regenerated each time this role is invoked.
