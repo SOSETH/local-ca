@@ -4,10 +4,20 @@
 
   - name: Set work dir
     set_fact:
-      workdir: "/tmp/aca_{{ caname }}"
+      workdir: "secrets/pki/{{ caname }}"
 
-  - name: Build local infrastructure
-    include: build.yml
+  - name: Check if CA is initialized
+    local_action: stat path="{{ workdir }}/pki"
+    register: castat
+    changed_when: False
+
+  - name: Init PKI
+    local_action: command ./easyrsa init-pki chdir="{{ workdir }}" serial=1
+    when: not castat.stat.exists
+
+  - name: Generate CA certificate
+    local_action: command ./easyrsa --batch --req-cn="{{caname}} Ansible local PKI" build-ca nopass chdir="{{ workdir }}" serial=1
+    when: not castat.stat.exists
 
   - name: Handle server certificate request
     include: server.yml
@@ -28,6 +38,3 @@
   - name: Handle ca information request
     include: ca.yml
     when: ca is defined
-
-  - name: Teardown local infrastructure
-    include: destroy.yml

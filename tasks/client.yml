@@ -5,19 +5,15 @@
     changed_when: False
 
   - name: Generate client certificate request for this node
-    local_action: command ./easyrsa --batch --req-cn="{{client.cn}}" gen-req "{{ansible_nodename}}-{{client.cn}}" nopass chdir="{{ workdir }}"
+    local_action: command ./easyrsa --batch --req-cn="{{client.cn}}" gen-req "{{ansible_nodename}}-{{client.cn}}" nopass chdir="{{ workdir }}" serial=1
     when: not ccrt.stat.exists
     delegate_to: localhost
 
   - name: Generate client certificate for this node
-    local_action: command ./easyrsa --batch sign-req client "{{ansible_nodename}}-{{client.cn}}" nopass chdir="{{ workdir }}"
+    local_action: command ./easyrsa --batch sign-req client "{{ansible_nodename}}-{{client.cn}}" nopass chdir="{{ workdir }}" serial=1
     when: not ccrt.stat.exists
     delegate_to: localhost
-
-  - name: Fix permissions
-    local_action: command chmod -R a+r . chdir="{{ workdir }}"
-    changed_when: False
-
+  
   - name: Copy client certificate to node
     copy: src="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ client.cn }}.crt" dest={{ client.cert }}
 

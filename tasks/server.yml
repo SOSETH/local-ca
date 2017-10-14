@@ -5,19 +5,19 @@
     changed_when: False
 
   - name: Generate server certificate request for this node
-    local_action: command ./easyrsa --batch --req-cn="{{server.cn}}" gen-req "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
+    local_action: command ./easyrsa --batch --req-cn="{{server.cn}}" gen-req "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}" serial=1
     when: (not ccrt.stat.exists) and (server.san is undefined)
 
   - name: Generate server certificate request for this node (SAN)
-    local_action: command ./easyrsa --batch --req-cn="{{server.cn}}" --subject-alt-name="{{server.san}}" gen-req "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
+    local_action: command ./easyrsa --batch --req-cn="{{server.cn}}" --subject-alt-name="{{server.san}}" gen-req "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}" serial=1
     when: (not ccrt.stat.exists) and (server.san is defined)
 
   - name: Sign server certificate for this node
-    local_action: command ./easyrsa --batch sign-req server "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
+    local_action: command ./easyrsa --batch sign-req server "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}" serial=1
     when: not ccrt.stat.exists and (server.san is undefined)
 
   - name: Sign server certificate for this node (SAN)
-    local_action: command ./easyrsa --batch --subject-alt-name="{{server.san}}" sign-req server "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
+    local_action: command ./easyrsa --batch --subject-alt-name="{{server.san}}" sign-req server "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}" serial=1
     when: not ccrt.stat.exists and (server.san is defined)
 
   - name: Copy server certificate to node
