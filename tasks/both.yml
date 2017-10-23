@@ -5,19 +5,19 @@
     changed_when: False
 
   - name: Generate dual certificate request for this node
-    local_action: command ./easyrsa --batch --req-cn="{{both.cn}}" gen-req "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" serial=1
+    local_action: command ./easyrsa --batch --req-cn="{{both.cn}}" gen-req "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" 
     when: (not ccrt.stat.exists) and (both.san is undefined)
 
   - name: Generate dual certificate request for this node (SAN)
-    local_action: command ./easyrsa --batch --req-cn="{{both.cn}}" --subject-alt-name="{{both.san}}" gen-req "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" serial=1
+    local_action: command ./easyrsa --batch --req-cn="{{both.cn}}" --subject-alt-name="{{both.san}}" gen-req "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" 
     when: (not ccrt.stat.exists) and (both.san is defined)
 
   - name: Sign dual certificate for this node
-    local_action: command ./easyrsa --batch sign-req both "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" serial=1
+    local_action: command ./easyrsa --batch sign-req both "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" 
     when: not ccrt.stat.exists and (both.san is undefined)
 
   - name: Sign dual certificate for this node (SAN)
-    local_action: command ./easyrsa --batch --subject-alt-name="{{both.san}}" sign-req both "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" serial=1
+    local_action: command ./easyrsa --batch --subject-alt-name="{{both.san}}" sign-req both "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" 
     when: not ccrt.stat.exists and (both.san is defined)
 
   - name: Copy dual certificate to node

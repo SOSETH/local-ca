@@ -4,7 +4,7 @@
     when: ca.cert is defined
 
   - name: Generate CRL
-    local_action: command ./easyrsa gen-crl chdir="{{ workdir }}" serial=1
+    local_action: command ./easyrsa gen-crl chdir="{{ workdir }}" 
     when: ca.crl is defined
     changed_when: False
 

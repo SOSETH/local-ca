@@ -12,11 +12,11 @@
     changed_when: False
 
   - name: Init PKI
-    local_action: command ./easyrsa init-pki chdir="{{ workdir }}" serial=1
+    local_action: command ./easyrsa init-pki chdir="{{ workdir }}" 
     when: not castat.stat.exists
 
   - name: Generate CA certificate
-    local_action: command ./easyrsa --batch --req-cn="{{caname}} Ansible local PKI" build-ca nopass chdir="{{ workdir }}" serial=1
+    local_action: command ./easyrsa --batch --req-cn="{{caname}} Ansible local PKI" build-ca nopass chdir="{{ workdir }}" 
     when: not castat.stat.exists
 
   - name: Handle server certificate request
