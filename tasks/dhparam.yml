@@ -9,5 +9,6 @@
     when: not dhfile.stat.exists
 
   - name: Copy DH parameters to server
+    become: True
     copy: src="{{ workdir }}/{{ansible_nodename}}-dh.pem" dest="{{ dhparam.dest }}"
     when: not dhfile.stat.exists

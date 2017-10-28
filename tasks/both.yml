@@ -21,7 +21,9 @@
     when: not ccrt.stat.exists and (both.san is defined)
 
   - name: Copy dual certificate to node
+    become: True
     copy: src="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ both.cn }}.crt" dest="{{ both.cert }}"
 
   - name: Copy dual key to node
+    become: True
     copy: src="{{ workdir }}/pki/private/{{ansible_nodename}}-{{ both.cn }}.key" dest="{{ both.key }}"

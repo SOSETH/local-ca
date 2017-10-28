@@ -15,7 +15,9 @@
     delegate_to: localhost
   
   - name: Copy client certificate to node
+    become: True
     copy: src="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ client.cn }}.crt" dest={{ client.cert }}
 
   - name: Copy client key to node
+    become: True
     copy: src="{{ workdir }}/pki/private/{{ansible_nodename}}-{{ client.cn }}.key" dest={{ client.key }}

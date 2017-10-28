@@ -21,7 +21,9 @@
     when: not ccrt.stat.exists and (server.san is defined)
 
   - name: Copy server certificate to node
+    become: True
     copy: src="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ server.cn }}.crt" dest="{{ server.cert }}"
 
   - name: Copy server key to node
+    become: True
     copy: src="{{ workdir }}/pki/private/{{ansible_nodename}}-{{ server.cn }}.key" dest="{{ server.key }}"
