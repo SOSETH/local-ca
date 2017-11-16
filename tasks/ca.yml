@@ -1,14 +1,16 @@
 ---
   - name: Copy CA certificate
+    become: True
     copy: src="{{ workdir }}/pki/ca.crt" dest="{{ ca.cert }}"
     when: ca.cert is defined
 
   - name: Generate CRL
-    local_action: command ./easyrsa gen-crl chdir="{{ workdir }}" 
+    local_action: command ./easyrsa gen-crl chdir="{{ workdir }}"
     when: ca.crl is defined
     changed_when: False
 
   - name: Copy CRL to node
+    become: True
     copy: src="{{ workdir }}/pki/crl.pem" dest={{ ca.crl }}
     when: ca.crl is defined
     changed_when: False
