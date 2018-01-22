@@ -20,21 +20,21 @@
     when: not castat.stat.exists
 
   - name: Handle server certificate request
-    include: server.yml
+    include_tasks: server.yml
     when: server is defined
 
   - name: Handle client certificate request
-    include: client.yml
+    include_tasks: client.yml
     when: client is defined
     
   - name: Handle dual certificate request
-    include: both.yml
+    include_tasks: both.yml
     when: both is defined
 
   - name: Handle DH parameters request
-    include: dhparam.yml
+    include_tasks: dhparam.yml
     when: dhparam is defined
 
   - name: Handle ca information request
-    include: ca.yml
+    include_tasks: ca.yml
     when: ca is defined
