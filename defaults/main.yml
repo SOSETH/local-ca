@@ -1,4 +1,8 @@
 ---
 lca_dhparam_size: 2048
-
+lca_is_local: True
+lca_fetchdir: fetch/ctmp
+lca_owner: root
+lca_group: root
+lca_mode: 0640
 # Most options are inside the CA tar

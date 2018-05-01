@@ -1,16 +1,22 @@
 ---
-  - name: Copy CA certificate
-    become: True
-    copy: src="{{ workdir }}/pki/ca.crt" dest="{{ ca.cert }}"
+  - import_tasks: copy_single.yml
+    vars:
+      name: "CA certificate"
+      src: "{{ workdir }}/pki/ca.crt"
+      dest: "{{ ca.cert }}"
+      tmpname: "ca-{{ ansible_nodename }}.pem"
     when: ca.cert is defined
 
   - name: Generate CRL
-    local_action: command ./easyrsa gen-crl chdir="{{ workdir }}"
+    command: ./easyrsa gen-crl chdir="{{ workdir }}"
     when: ca.crl is defined
     changed_when: False
+    delegate_to: "{{ workhost }}"
 
-  - name: Copy CRL to node
-    become: True
-    copy: src="{{ workdir }}/pki/crl.pem" dest={{ ca.crl }}
+  - import_tasks: copy_single.yml
+    vars:
+      name: "CRL"
+      src: "{{ workdir }}/pki/crl.pem"
+      dest: "{{ ca.crl }}"
+      tmpname: "crl-{{ ansible_nodename }}.pem"
     when: ca.crl is defined
-    changed_when: False

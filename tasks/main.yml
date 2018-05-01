@@ -5,19 +5,38 @@
   - name: Set work dir
     set_fact:
       workdir: "secrets/pki/{{ caname }}"
+    when: lca_is_local
+
+  - name: Set work dir
+    set_fact:
+      workdir: "{{ lca_basepath }}/{{ caname }}"
+    when: not lca_is_local
+
+  - name: Set delegation target
+    set_fact:
+      workhost: localhost
+    when: lca_is_local
+
+  - name: Set delegation target
+    set_fact:
+      workhost: "{{ lca_hostname }}"
+    when: not lca_is_local
 
   - name: Check if CA is initialized
-    local_action: stat path="{{ workdir }}/pki"
+    stat: path="{{ workdir }}/pki/ca.crt"
     register: castat
     changed_when: False
+    delegate_to: "{{ workhost }}"
 
   - name: Init PKI
-    local_action: command ./easyrsa init-pki chdir="{{ workdir }}" 
+    command: ./easyrsa init-pki chdir="{{ workdir }}"
     when: not castat.stat.exists
+    delegate_to: "{{ workhost }}"
 
   - name: Generate CA certificate
-    local_action: command ./easyrsa --batch --req-cn="{{caname}} Ansible local PKI" build-ca nopass chdir="{{ workdir }}" 
+    command: ./easyrsa --batch --req-cn="{{caname}} Ansible local PKI" build-ca nopass chdir="{{ workdir }}"
     when: not castat.stat.exists
+    delegate_to: "{{ workhost }}"
 
   - name: Handle server certificate request
     include_tasks: server.yml
@@ -26,7 +45,7 @@
   - name: Handle client certificate request
     include_tasks: client.yml
     when: client is defined
-    
+
   - name: Handle dual certificate request
     include_tasks: both.yml
     when: both is defined

@@ -1,29 +1,31 @@
 ---
   - name: Check if node server certificate exists
-    local_action: stat path="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ server.cn }}.crt"
+    stat: path="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ server.cn }}.crt"
     register: ccrt
     changed_when: False
+    delegate_to: "{{ workhost }}"
 
   - name: Generate server certificate request for this node
-    local_action: command ./easyrsa --batch --req-cn="{{server.cn}}" gen-req "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}" 
+    command: ./easyrsa --batch --req-cn="{{server.cn}}" gen-req "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
     when: (not ccrt.stat.exists) and (server.san is undefined)
+    delegate_to: "{{ workhost }}"
 
   - name: Generate server certificate request for this node (SAN)
-    local_action: command ./easyrsa --batch --req-cn="{{server.cn}}" --subject-alt-name="{{server.san}}" gen-req "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}" 
+    command: ./easyrsa --batch --req-cn="{{server.cn}}" --subject-alt-name="{{server.san}}" gen-req "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
     when: (not ccrt.stat.exists) and (server.san is defined)
+    delegate_to: "{{ workhost }}"
 
   - name: Sign server certificate for this node
-    local_action: command ./easyrsa --batch sign-req server "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}" 
+    command: ./easyrsa --batch sign-req server "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
     when: not ccrt.stat.exists and (server.san is undefined)
+    delegate_to: "{{ workhost }}"
 
   - name: Sign server certificate for this node (SAN)
-    local_action: command ./easyrsa --batch --subject-alt-name="{{server.san}}" sign-req server "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}" 
+    command: ./easyrsa --batch --subject-alt-name="{{server.san}}" sign-req server "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
     when: not ccrt.stat.exists and (server.san is defined)
+    delegate_to: "{{ workhost }}"
 
-  - name: Copy server certificate to node
-    become: True
-    copy: src="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ server.cn }}.crt" dest="{{ server.cert }}"
-
-  - name: Copy server key to node
-    become: True
-    copy: src="{{ workdir }}/pki/private/{{ansible_nodename}}-{{ server.cn }}.key" dest="{{ server.key }}"
+  - import_tasks: copy.yml
+    vars:
+      name: "server"
+      cert: "{{ server }}"

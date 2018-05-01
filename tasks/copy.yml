@@ -1,0 +1,40 @@
+---
+  - name: Copy {{ name }} certificate to node
+    become: True
+    when: lca_is_local
+    copy:
+      src: "{{ workdir }}/pki/issued/{{ ansible_nodename }}-{{ cert.cn }}.{{ item.key }}"
+      dest: "{{ item.value }}"
+      owner: "{{ lca_owner }}"
+      group: "{{ lca_group }}"
+      mode: "{{ lca_mode }}"
+    with_dict:
+      crt: "{{ cert.cert }}"
+      key: "{{ cert.key }}"
+
+  - name: Fetch {{ name }} certificate to control node
+    when: not lca_is_local
+    become: True
+    fetch:
+      src: "{{ workdir }}/pki/{{ item.value }}/{{ ansible_nodename }}-{{ cert.cn }}.{{ item.key }}"
+      dest: "{{ lca_fetchdir }}/{{ ansible_nodename }}-{{ cert.cn }}.{{ item.key }}"
+      flat: yes
+      validate_checksum: yes
+      fail_on_missing: yes
+    with_dict:
+      crt: "issued"
+      key: "private"
+    delegate_to: "{{ workhost }}"
+
+  - name: Upload {{ name }} certificate to target node
+    when: not lca_is_local
+    become: True
+    copy:
+      src: "{{ lca_fetchdir }}/{{ ansible_nodename }}-{{ cert.cn }}.{{ item.key }}"
+      dest: "{{ item.value }}"
+      owner: "{{ lca_owner }}"
+      group: "{{ lca_group }}"
+      mode: "{{ lca_mode }}"
+    with_dict:
+      crt: "{{ cert.cert }}"
+      key: "{{ cert.key }}"

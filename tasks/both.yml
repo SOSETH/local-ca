@@ -1,29 +1,31 @@
 ---
   - name: Check if node dual certificate exists
-    local_action: stat path="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ both.cn }}.crt"
+    stat: path="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ both.cn }}.crt"
     register: ccrt
     changed_when: False
+    delegate_to: "{{ workhost }}"
 
   - name: Generate dual certificate request for this node
-    local_action: command ./easyrsa --batch --req-cn="{{both.cn}}" gen-req "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" 
+    command: ./easyrsa --batch --req-cn="{{both.cn}}" gen-req "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}"
     when: (not ccrt.stat.exists) and (both.san is undefined)
+    delegate_to: "{{ workhost }}"
 
   - name: Generate dual certificate request for this node (SAN)
-    local_action: command ./easyrsa --batch --req-cn="{{both.cn}}" --subject-alt-name="{{both.san}}" gen-req "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" 
+    command: ./easyrsa --batch --req-cn="{{both.cn}}" --subject-alt-name="{{both.san}}" gen-req "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}"
     when: (not ccrt.stat.exists) and (both.san is defined)
+    delegate_to: "{{ workhost }}"
 
   - name: Sign dual certificate for this node
-    local_action: command ./easyrsa --batch sign-req both "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" 
+    command: ./easyrsa --batch sign-req both "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}"
     when: not ccrt.stat.exists and (both.san is undefined)
+    delegate_to: "{{ workhost }}"
 
   - name: Sign dual certificate for this node (SAN)
-    local_action: command ./easyrsa --batch --subject-alt-name="{{both.san}}" sign-req both "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}" 
+    command: ./easyrsa --batch --subject-alt-name="{{both.san}}" sign-req both "{{ansible_nodename}}-{{both.cn}}" nopass chdir="{{ workdir }}"
     when: not ccrt.stat.exists and (both.san is defined)
+    delegate_to: "{{ workhost }}"
 
-  - name: Copy dual certificate to node
-    become: True
-    copy: src="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ both.cn }}.crt" dest="{{ both.cert }}"
-
-  - name: Copy dual key to node
-    become: True
-    copy: src="{{ workdir }}/pki/private/{{ansible_nodename}}-{{ both.cn }}.key" dest="{{ both.key }}"
+  - import_tasks: copy.yml
+    vars:
+      name: "Dual"
+      cert: "{{ both }}"
