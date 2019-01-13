@@ -8,14 +8,18 @@
     become: True
     when: local_ca_is_local
     copy:
-      src: "{{ workdir }}/pki/issued/{{ ansible_nodename }}-{{ cert.cn }}.{{ item.key }}"
-      dest: "{{ item.value }}"
+      src: "{{ workdir }}/pki/{{ item.value.path }}/{{ ansible_nodename }}-{{ cert.cn }}.{{ item.key }}"
+      dest: "{{ item.value.name }}"
       owner: "{{ local_ca_owner }}"
       group: "{{ local_ca_group }}"
       mode: "{{ local_ca_mode }}"
     with_dict:
-      crt: "{{ cert.cert }}"
-      key: "{{ cert.key }}"
+      crt:
+        path: issued
+        name: "{{ cert.cert }}"
+      key:
+        path: private
+        name: "{{ cert.key }}"
 
   - name: Fetch {{ name }} certificate to control node
     when: not local_ca_is_local
