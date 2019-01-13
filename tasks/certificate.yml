@@ -1,0 +1,63 @@
+---
+  - name: Check if node certificate exists
+    stat:
+      path: "{{ workdir }}/pki/issued/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.crt"
+    register: ccrt
+    changed_when: False
+    delegate_to: "{{ local_ca_workhost }}"
+
+  - name: Generate certificate request for this node
+    command: >
+      ./easyrsa
+      --batch
+      --req-cn="{{ local_ca_instance.cn }}"
+      gen-req "{{ ansible_nodename }}-{{ local_ca_instance.cn }}"
+      nopass
+
+    args:
+      chdir: "{{ workdir }}"
+    when: (not ccrt.stat.exists) and (local_ca_instance.san is undefined)
+    delegate_to: "{{ local_ca_workhost }}"
+
+  - name: Generate certificate request for this node (SAN)
+    command: >
+      ./easyrsa
+      --batch
+      --req-cn="{{ local_ca_instance.cn }}"
+      --subject-alt-name="{{ local_ca_instance.san }}"
+      gen-req "{{ ansible_nodename }}-{{ local_ca_instance.cn }}"
+      nopass
+
+    args:
+      chdir: "{{ workdir }}"
+    when: (not ccrt.stat.exists) and (local_ca_instance.san is defined)
+    delegate_to: "{{ local_ca_workhost }}"
+
+  - name: Sign certificate for this node
+    command: >
+      ./easyrsa
+      --batch
+      sign-req {{ local_ca_type }} "{{ ansible_nodename }}-{{ local_ca_instance.cn }}"
+      nopass
+
+    args:
+      chdir: "{{ workdir }}"
+    when: (not ccrt.stat.exists) and (local_ca_instance.san is undefined)
+    delegate_to: "{{ local_ca_workhost }}"
+
+  - name: Sign certificate for this node (SAN)
+    command: >
+      ./easyrsa
+      --batch
+      --subject-alt-name="{{ local_ca_instance.san }}"
+      sign-req {{ local_ca_type }} "{{ ansible_nodename }}-{{ local_ca_instance.cn}}"
+      nopass
+
+    args:
+      chdir: "{{ workdir }}"
+    when: (not ccrt.stat.exists) and (local_ca_instance.san is defined)
+    delegate_to: "{{ local_ca_workhost }}"
+
+  - import_tasks: copy.yml
+    vars:
+      cert: "{{ local_ca_instance }}"

@@ -1,10 +1,9 @@
 ---
 # Call with variables:
 #
-# * `name`: The name of the files to copy
 # * `cert`: The base file name of the certificate to copy
 
-  - name: Copy {{ name }} certificate to node
+  - name: Copy certificate to node
     become: True
     when: local_ca_is_local
     copy:
@@ -21,7 +20,7 @@
         path: private
         name: "{{ cert.key }}"
 
-  - name: Fetch {{ name }} certificate to control node
+  - name: Fetch certificate to control node
     when: not local_ca_is_local
     become: True
     fetch:
@@ -35,7 +34,7 @@
       key: "private"
     delegate_to: "{{ local_ca_workhost }}"
 
-  - name: Upload {{ name }} certificate to target node
+  - name: Upload certificate to target node
     when: not local_ca_is_local
     become: True
     copy:

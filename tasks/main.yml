@@ -52,15 +52,24 @@
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Handle server certificate request
-    include_tasks: server.yml
+    include_tasks: certificate.yml
+    vars:
+      - local_ca_instance: "{{ local_ca_server }}"
+      - local_ca_type: server
     when: local_ca_server is defined
 
   - name: Handle client certificate request
-    include_tasks: client.yml
+    include_tasks: certificate.yml
+    vars:
+      - local_ca_instance: "{{ local_ca_client }}"
+      - local_ca_type: client
     when: local_ca_client is defined
 
   - name: Handle dual certificate request
-    include_tasks: both.yml
+    include_tasks: certificate.yml
+    vars:
+      - local_ca_instance: "{{ local_ca_both }}"
+      - local_ca_type: both
     when: local_ca_both is defined
 
   - name: Handle DH parameters request
