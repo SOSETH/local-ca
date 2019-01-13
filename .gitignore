@@ -2,4 +2,3 @@ __pycache__
 *.pyc
 venv
 molecule/default/secrets
-*.tar

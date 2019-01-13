@@ -72,9 +72,9 @@ An example invocation might look like this:
 which would upload the CA and generate a dual-use certificate with both the
 unqualified and the fully qualified hostname and all IPv4s included.
 
-Before using the role for the first time, you need to extract `ca.template` in
-the ca directory (`{{ lca_basepath }}/{{ caname }}` if the CA is remote,
-`secrets/pki/{{ caname }}` if it is local).
+Before using the role for the first time, you need to extract
+`files/ca.template.tar` in the ca directory (`{{ lca_basepath }}/{{ caname }}`
+if the CA is remote, `secrets/pki/{{ caname }}` if it is local).
 
 ## Rationale
 
