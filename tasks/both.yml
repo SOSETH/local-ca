@@ -1,28 +1,61 @@
 ---
   - name: Check if node dual certificate exists
-    stat: path="{{ workdir }}/pki/issued/{{ ansible_nodename }}-{{ local_ca_both.cn }}.crt"
+    stat:
+      path: "{{ workdir }}/pki/issued/{{ ansible_nodename }}-{{ local_ca_both.cn }}.crt"
     register: ccrt
     changed_when: False
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate dual certificate request for this node
-    command: ./easyrsa --batch --req-cn="{{ local_ca_both.cn }}" gen-req "{{ ansible_nodename }}-{{ local_ca_both.cn }}" nopass chdir="{{ workdir }}"
-    when: (not ccrt.stat.exists) and (both.san is undefined)
+    command: >
+      ./easyrsa
+      --batch
+      --req-cn="{{ local_ca_both.cn }}"
+      gen-req "{{ ansible_nodename }}-{{ local_ca_both.cn }}"
+      nopass
+
+    args:
+      chdir: "{{ workdir }}"
+    when: (not ccrt.stat.exists) and (local_ca_both.san is undefined)
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate dual certificate request for this node (SAN)
-    command: ./easyrsa --batch --req-cn="{{ local_ca_both.cn}}" --subject-alt-name="{{ local_ca_both.san}}" gen-req "{{ ansible_nodename }}-{{ local_ca_both.cn}}" nopass chdir="{{ workdir }}"
-    when: (not ccrt.stat.exists) and (both.san is defined)
+    command: >
+      ./easyrsa
+      --batch
+      --req-cn="{{ local_ca_both.cn }}"
+      --subject-alt-name="{{ local_ca_both.san }}"
+      gen-req "{{ ansible_nodename }}-{{ local_ca_both.cn }}"
+      nopass
+
+    args:
+      chdir: "{{ workdir }}"
+    when: (not ccrt.stat.exists) and (local_ca_both.san is defined)
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Sign dual certificate for this node
-    command: ./easyrsa --batch sign-req both "{{ ansible_nodename }}-{{ local_ca_both.cn}}" nopass chdir="{{ workdir }}"
-    when: not ccrt.stat.exists and (both.san is undefined)
+    command: >
+      ./easyrsa
+      --batch
+      sign-req both "{{ ansible_nodename }}-{{ local_ca_both.cn }}"
+      nopass
+
+    args:
+      chdir: "{{ workdir }}"
+    when: (not ccrt.stat.exists) and (local_ca_both.san is undefined)
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Sign dual certificate for this node (SAN)
-    command: ./easyrsa --batch --subject-alt-name="{{ local_ca_both.san}}" sign-req both "{{ ansible_nodename }}-{{ local_ca_both.cn}}" nopass chdir="{{ workdir }}"
-    when: not ccrt.stat.exists and (both.san is defined)
+    command: >
+      ./easyrsa
+      --batch
+      --subject-alt-name="{{ local_ca_both.san }}"
+      sign-req both "{{ ansible_nodename }}-{{ local_ca_both.cn}}"
+      nopass
+
+    args:
+      chdir: "{{ workdir }}"
+    when: (not ccrt.stat.exists) and (local_ca_both.san is defined)
     delegate_to: "{{ local_ca_workhost }}"
 
   - import_tasks: copy.yml

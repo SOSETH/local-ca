@@ -33,8 +33,8 @@ where params consists of at least one of the following blocks:
   * `cn` (required): Common Name
   * `san` (optional): SAN in openssl cmdline format.
 
-* `local_ca_both`: Generate a server certificate that can also be used as a client
-  certificate. Parameters are the same as server.
+* `local_ca_both`: Generate a server certificate that can also be used as a
+  client certificate. Parameters are the same as `local_ca_server`.
 
 * `local_ca_ca`: Copy CA certificate to node
   * `cert` (required): destination
