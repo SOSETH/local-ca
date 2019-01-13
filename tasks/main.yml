@@ -1,5 +1,6 @@
 ---
-  - fail: msg="You need to set caname, see README.md"
+  - fail:
+      msg: "You need to set caname, see README.md"
     when: local_ca_caname is not defined
 
   - name: Check local execution
@@ -42,12 +43,16 @@
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Init PKI
-    command: ./easyrsa init-pki chdir="{{ workdir }}"
+    command: ./easyrsa init-pki
+    args:
+      chdir: "{{ workdir }}"
     when: not castat.stat.exists
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate CA certificate
-    command: ./easyrsa --batch --req-cn="{{ local_ca_caname }} Ansible local PKI" build-ca nopass chdir="{{ workdir }}"
+    command: ./easyrsa --batch --req-cn="{{ local_ca_caname }} Ansible local PKI" build-ca nopass
+    args:
+      chdir: "{{ workdir }}"
     when: not castat.stat.exists
     delegate_to: "{{ local_ca_workhost }}"
 

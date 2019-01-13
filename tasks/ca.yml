@@ -8,7 +8,9 @@
     when: local_ca_ca.cert is defined
 
   - name: Generate CRL
-    command: ./easyrsa gen-crl chdir="{{ workdir }}"
+    command: ./easyrsa gen-crl
+    args:
+      chdir: "{{ workdir }}"
     when: local_ca_ca.crl is defined
     changed_when: False
     delegate_to: "{{ local_ca_workhost }}"

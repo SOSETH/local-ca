@@ -1,6 +1,7 @@
 ---
   - name: Check if DH parameters exist
-    stat: path="{{ workdir }}/{{ ansible_nodename }}-dh.pem"
+    stat:
+      path: "{{ workdir }}/{{ ansible_nodename }}-dh.pem"
     register: dhfile
     changed_when: False
 
