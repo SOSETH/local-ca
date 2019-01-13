@@ -7,7 +7,7 @@ delegated node) CA.
 
 | Variable name | Default value | Description |
 |---------------|---------------|-------------|
-| `local_ca_dhparam_size` | `2048` | Size for generated Diffie-Hellman parameters |
+| `local_ca_dhparam_size` | `4096` | Size for generated Diffie-Hellman parameters |
 | `local_ca_workhost` | `localhost` | The host to generate the CA on |
 | `local_ca_basepath` | undefined | Base directories of CAs on the remote host if `local_ca_is_local` is false |
 | `local_ca_fetchdir` | `fetch/ctmp` | Where to store secret material on the control node |
@@ -47,7 +47,7 @@ where params consists of at least one of the following blocks:
   * `cn` (required): Common Name
 
 * `local_ca_dhparam`: Generate dhparam
-  * `local_ca_dest` (required): destination
+  * `dest` (required): destination
 
 All files will be in PEM format.
 
