@@ -1,19 +1,26 @@
 ---
+# Call with variables:
+#
+# * `name`: The name of the files to copy
+# * `src`
+# * `dest`
+# * `tmpname`: Temporary name on the remote host
+
   - name: Copy {{ name }} to node
     become: True
-    when: lca_is_local
+    when: local_ca_is_local
     copy:
       src: "{{ src }}"
       dest: "{{ dest }}"
-      owner: "{{ lca_owner }}"
-      group: "{{ lca_group }}"
-      mode: "{{ lca_mode }}"
+      owner: "{{ local_ca_owner }}"
+      group: "{{ local_ca_group }}"
+      mode: "{{ local_ca_mode }}"
 
   - name: Fetch {{ name }} to control node
-    when: not lca_is_local
+    when: not local_ca_is_local
     fetch:
       src: "{{ src }}"
-      dest: "{{ lca_fetchdir }}/{{ tmpname }}"
+      dest: "{{ local_ca_fetchdir }}/{{ tmpname }}"
       flat: yes
       validate_checksum: yes
       fail_on_missing: yes
@@ -23,8 +30,8 @@
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Upload {{ name }} to target node
-    when: not lca_is_local
+    when: not local_ca_is_local
     become: True
     copy:
-      src: "{{ lca_fetchdir }}/{{ tmpname }}"
+      src: "{{ local_ca_fetchdir }}/{{ tmpname }}"
       dest: "{{ dest }}"

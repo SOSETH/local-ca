@@ -1,20 +1,20 @@
 ---
   - fail: msg="You need to set caname, see README.md"
-    when: caname is not defined
+    when: local_ca_caname is not defined
 
   - name: Check local execution
     set_fact:
-      lca_is_local: "{{ local_ca_workhost == 'localhost' }}"
+      local_ca_is_local: "{{ local_ca_workhost == 'localhost' }}"
 
   - name: Set work dir
     set_fact:
-      workdir: "secrets/pki/{{ caname }}"
-    when: lca_is_local
+      workdir: "secrets/pki/{{ local_ca_caname }}"
+    when: local_ca_is_local
 
   - name: Set work dir
     set_fact:
-      workdir: "{{ lca_basepath }}/{{ caname }}"
-    when: not lca_is_local
+      workdir: "{{ local_ca_basepath }}/{{ local_ca_caname }}"
+    when: not local_ca_is_local
 
   - name: Create CA directory
     file:
@@ -47,26 +47,26 @@
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate CA certificate
-    command: ./easyrsa --batch --req-cn="{{caname}} Ansible local PKI" build-ca nopass chdir="{{ workdir }}"
+    command: ./easyrsa --batch --req-cn="{{ local_ca_caname }} Ansible local PKI" build-ca nopass chdir="{{ workdir }}"
     when: not castat.stat.exists
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Handle server certificate request
     include_tasks: server.yml
-    when: server is defined
+    when: local_ca_server is defined
 
   - name: Handle client certificate request
     include_tasks: client.yml
-    when: client is defined
+    when: local_ca_client is defined
 
   - name: Handle dual certificate request
     include_tasks: both.yml
-    when: both is defined
+    when: local_ca_both is defined
 
   - name: Handle DH parameters request
     include_tasks: dhparam.yml
-    when: dhparam is defined
+    when: local_ca_dhparam is defined
 
   - name: Handle ca information request
     include_tasks: ca.yml
-    when: ca is defined
+    when: local_ca_ca is defined

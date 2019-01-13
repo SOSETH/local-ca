@@ -7,14 +7,13 @@ delegated node) CA.
 
 | Variable name | Default value | Description |
 |---------------|---------------|-------------|
-| `lca_dhparam_size` | `2048` | Size for generated Diffie-Hellman parameters |
+| `local_ca_dhparam_size` | `2048` | Size for generated Diffie-Hellman parameters |
 | `local_ca_workhost` | `localhost` | The host to generate the CA on |
-| `lca_hostname` | undefined | Which host to delegate CA actions to if `lca_is_local` is false |
-| `lca_basepath` | undefined | Base directories of CAs on the remote host if `lca_is_local` is false |
-| `lca_fetchdir` | `fetch/ctmp` | Where to store secret material on the control node |
-| `lca_owner` | `root` | Owner of certificates on the target node |
-| `lca_group` | `root` | Group of certificates on the target node |
-| `lca_mode` | `0640` | Permissions of certificates on the target node |
+| `local_ca_basepath` | undefined | Base directories of CAs on the remote host if `local_ca_is_local` is false |
+| `local_ca_fetchdir` | `fetch/ctmp` | Where to store secret material on the control node |
+| `local_ca_owner` | `root` | Owner of certificates on the target node |
+| `local_ca_group` | `root` | Group of certificates on the target node |
+| `local_ca_mode` | `0640` | Permissions of certificates on the target node |
 
 ## How to use this?
 
@@ -22,33 +21,33 @@ This role has to be called with parameters, like so:
 
 ```
   - role: local-ca
-    caname: DemoPKI
+    local_ca_caname: DemoPKI
     <params>
 ```
 
 where params consists of at least one of the following blocks:
 
-* `server`: Generate a server certificate. Arguments:
+* `local_ca_server`: Generate a server certificate. Arguments:
   * `cert` (required): path to certificate on target node
   * `key` (required): path to key on target node (unencrypted)
   * `cn` (required): Common Name
   * `san` (optional): SAN in openssl cmdline format.
 
-* `both`: Generate a server certificate that can also be used as a client
+* `local_ca_both`: Generate a server certificate that can also be used as a client
   certificate. Parameters are the same as server.
 
-* `ca`: Copy CA certificate to node
+* `local_ca_ca`: Copy CA certificate to node
   * `cert` (required): destination
   * `crl` (optional): destination for CRL. The CRL gets regenerated each time
     this role is invoked.
 
-* `client`: Generate a client certificate. Arguments:
+* `local_ca_client`: Generate a client certificate. Arguments:
   * `cert` (required): path to certificate on target node
   * `key` (required): path to key on target node (unencrypted)
   * `cn` (required): Common Name
 
-* `dhparm`: Generate dhparam
-  * `dest` (required): destination
+* `local_ca_dhparam`: Generate dhparam
+  * `local_ca_dest` (required): destination
 
 All files will be in PEM format.
 
@@ -58,14 +57,14 @@ An example invocation might look like this:
   - hosts: mon-server
     roles:
       - role: local-ca
-        caname: icinga
-        lca_group: nagios
-        both:
+        local_ca_caname: icinga
+        local_ca_group: nagios
+        local_ca_both:
           cert: "/var/lib/icinga2/certs/{{ ansible_fqdn }}.crt"
           key: "/var/lib/icinga2/certs/{{ ansible_fqdn }}.key"
           cn: "{{ ansible_fqdn }}"
           san: "DNS:{{ ansible_nodename }},DNS:{{ ansible_fqdn }},IP:{{ansible_all_ipv4_addresses|join(',IP:')}},IP:127.0.0.1"
-        ca:
+        local_ca_ca:
           cert: "/var/lib/icinga2/certs/ca.crt"
 ```
 
