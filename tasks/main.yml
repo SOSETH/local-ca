@@ -16,10 +16,29 @@
       workdir: "{{ lca_basepath }}/{{ caname }}"
     when: not lca_is_local
 
+  - name: Create CA directory
+    file:
+      name: "{{ workdir }}"
+      state: directory
+    delegate_to: "{{ local_ca_workhost }}"
+
   - name: Check if CA is initialized
-    stat: path="{{ workdir }}/pki/ca.crt"
+    stat:
+      path: "{{ workdir }}/easyrsa"
     register: castat
     changed_when: False
+    delegate_to: "{{ local_ca_workhost }}"
+
+  - name: Copy tar archive
+    copy:
+      src: ca.template.tar
+      dest: "/tmp/easyrsa.tar"
+    when: not castat.stat.exists
+    delegate_to: "{{ local_ca_workhost }}"
+
+  - name: Extract tar archive
+    command: tar xf /tmp/easyrsa.tar -C "{{ workdir }}"
+    when: not castat.stat.exists
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Init PKI
