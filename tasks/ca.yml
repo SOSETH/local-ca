@@ -11,7 +11,7 @@
     command: ./easyrsa gen-crl chdir="{{ workdir }}"
     when: ca.crl is defined
     changed_when: False
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - import_tasks: copy_single.yml
     vars:

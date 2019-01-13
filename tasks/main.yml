@@ -2,6 +2,10 @@
   - fail: msg="You need to set caname, see README.md"
     when: caname is not defined
 
+  - name: Check local execution
+    set_fact:
+      lca_is_local: "{{ local_ca_workhost == 'localhost' }}"
+
   - name: Set work dir
     set_fact:
       workdir: "secrets/pki/{{ caname }}"
@@ -12,31 +16,21 @@
       workdir: "{{ lca_basepath }}/{{ caname }}"
     when: not lca_is_local
 
-  - name: Set delegation target
-    set_fact:
-      workhost: localhost
-    when: lca_is_local
-
-  - name: Set delegation target
-    set_fact:
-      workhost: "{{ lca_hostname }}"
-    when: not lca_is_local
-
   - name: Check if CA is initialized
     stat: path="{{ workdir }}/pki/ca.crt"
     register: castat
     changed_when: False
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - name: Init PKI
     command: ./easyrsa init-pki chdir="{{ workdir }}"
     when: not castat.stat.exists
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate CA certificate
     command: ./easyrsa --batch --req-cn="{{caname}} Ansible local PKI" build-ca nopass chdir="{{ workdir }}"
     when: not castat.stat.exists
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - name: Handle server certificate request
     include_tasks: server.yml

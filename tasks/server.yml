@@ -3,27 +3,27 @@
     stat: path="{{ workdir }}/pki/issued/{{ansible_nodename}}-{{ server.cn }}.crt"
     register: ccrt
     changed_when: False
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate server certificate request for this node
     command: ./easyrsa --batch --req-cn="{{server.cn}}" gen-req "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
     when: (not ccrt.stat.exists) and (server.san is undefined)
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate server certificate request for this node (SAN)
     command: ./easyrsa --batch --req-cn="{{server.cn}}" --subject-alt-name="{{server.san}}" gen-req "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
     when: (not ccrt.stat.exists) and (server.san is defined)
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - name: Sign server certificate for this node
     command: ./easyrsa --batch sign-req server "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
     when: not ccrt.stat.exists and (server.san is undefined)
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - name: Sign server certificate for this node (SAN)
     command: ./easyrsa --batch --subject-alt-name="{{server.san}}" sign-req server "{{ansible_nodename}}-{{server.cn}}" nopass chdir="{{ workdir }}"
     when: not ccrt.stat.exists and (server.san is defined)
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - import_tasks: copy.yml
     vars:

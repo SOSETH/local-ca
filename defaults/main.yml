@@ -1,6 +1,6 @@
 ---
 lca_dhparam_size: 2048
-lca_is_local: True
+local_ca_workhost: localhost
 lca_fetchdir: fetch/ctmp
 lca_owner: root
 lca_group: root

@@ -8,7 +8,7 @@ delegated node) CA.
 | Variable name | Default value | Description |
 |---------------|---------------|-------------|
 | `lca_dhparam_size` | `2048` | Size for generated Diffie-Hellman parameters |
-| `lca_is_local` | `True` | Whether the CA is actually "local" or on some remote node |
+| `local_ca_workhost` | `localhost` | The host to generate the CA on |
 | `lca_hostname` | undefined | Which host to delegate CA actions to if `lca_is_local` is false |
 | `lca_basepath` | undefined | Base directories of CAs on the remote host if `lca_is_local` is false |
 | `lca_fetchdir` | `fetch/ctmp` | Where to store secret material on the control node |

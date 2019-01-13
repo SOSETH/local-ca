@@ -20,7 +20,7 @@
     with_items:
       - crt
       - key
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - name: Upload {{ name }} to target node
     when: not lca_is_local

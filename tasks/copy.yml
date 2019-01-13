@@ -24,7 +24,7 @@
     with_dict:
       crt: "issued"
       key: "private"
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - name: Upload {{ name }} certificate to target node
     when: not lca_is_local
