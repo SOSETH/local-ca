@@ -1,0 +1,25 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: Ensure CA is absent
+      file:
+        path: "secrets/pki/unittest"
+        state: absent
+      delegate_to: "localhost"
+
+    - name: Create directories
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "secrets"
+        - "secrets/pki"
+        - "secrets/pki/unittest"
+      delegate_to: "localhost"
+
+    - name: Extract template
+      shell: tar -xf ../../ca.template -C secrets/pki/unittest
+      args:
+        warn: false
+      delegate_to: "localhost"

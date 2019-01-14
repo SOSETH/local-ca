@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: local-ca
+      caname: unittest
+      both:
+        cert: "/tmp/dual.crt"
+        key: "/tmp/dual.key"
+        cn: "{{ ansible_fqdn }}"
+        san: "DNS:{{ ansible_nodename }},DNS:{{ ansible_fqdn }},IP:{{ansible_all_ipv4_addresses|join(',IP:')}},IP:127.0.0.1"
+      ca:
+        cert: "/tmp/ca.crt"
