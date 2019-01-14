@@ -1,4 +1,4 @@
-image: debian:stretch
+image: soseth/python-ci-base:stretch
 
 stages:
   - test
@@ -12,7 +12,6 @@ cache:
     - virtenv/
 
 before_script:
-  - apt update && apt install -y python-virtualenv python-pip
   - python2 -m virtualenv virtenv
   - source virtenv/bin/activate
 
