@@ -12,7 +12,7 @@ cache:
     - virtenv/
 
 before_script:
-  - sudo apt update && sudo apt install -y virtualenv
+  - apt update && apt install -y python-virtualenv python-pip
   - python2 -m virtualenv virtenv
   - source virtenv/bin/activate
 
