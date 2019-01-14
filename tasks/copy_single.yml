@@ -24,9 +24,6 @@
       flat: yes
       validate_checksum: yes
       fail_on_missing: yes
-    with_items:
-      - crt
-      - key
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Upload {{ name }} to target node
@@ -35,3 +32,6 @@
     copy:
       src: "{{ local_ca_fetchdir }}/{{ tmpname }}"
       dest: "{{ dest }}"
+      owner: "{{ local_ca_owner }}"
+      group: "{{ local_ca_group }}"
+      mode: "{{ local_ca_mode }}"

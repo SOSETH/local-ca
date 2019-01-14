@@ -54,6 +54,19 @@
     when: (not ccrt.stat.exists) and (local_ca_instance.san is defined)
     delegate_to: "{{ local_ca_workhost }}"
 
-  - import_tasks: copy.yml
+  - import_tasks: copy_single.yml
+    when: local_ca_instance.key is defined
     vars:
-      cert: "{{ local_ca_instance }}"
+      name: PEM Key
+      src: "{{ workdir }}/pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.key"
+      dest: "{{ local_ca_instance.key }}"
+      tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}.key"
+
+  - import_tasks: copy_single.yml
+    when: local_ca_instance.cert is defined
+    vars:
+      name: PEM Certificate
+      src: "{{ workdir }}/pki/issued/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.crt"
+      dest: "{{ local_ca_instance.cert }}"
+      tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}.crt"
+
