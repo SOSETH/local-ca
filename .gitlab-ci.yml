@@ -18,9 +18,6 @@ before_script:
 
 molecule:
   stage: test
-  tags:
-    - pip36
-    - docker
   script:
     - docker -v
     - python -V
