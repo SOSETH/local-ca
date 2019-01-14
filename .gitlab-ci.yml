@@ -1,0 +1,8 @@
+image: python:3-stretch
+stages:
+  - linting
+before_script:
+  - pip install ansible-lint
+linting:
+  stage: linting
+  script: ansible-lint .
