@@ -35,3 +35,6 @@ verifier:
     name: flake8
     options:
       max-line-length: 120
+      exclude:
+        - venv
+        - virtenv
