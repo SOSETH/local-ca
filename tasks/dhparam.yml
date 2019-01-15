@@ -1,13 +1,9 @@
 ---
-  - name: Check if DH parameters exist
-    stat:
-      path: "{{ workdir }}/{{ ansible_nodename }}-dh.pem"
-    register: dhfile
-    changed_when: False
-
   - name: Generate DH parameters
-    command: openssl dhparam -outform PEM -out "{{ workdir }}/{{ ansible_nodename }}-dh.pem" {{ local_ca_dhparam_size }}
-    when: not dhfile.stat.exists
+    command: openssl dhparam -outform PEM -out {{ workdir }}/{{ ansible_nodename }}-dh.pem {{ local_ca_dhparam_size }}
+    args:
+      creates: "{{ workdir }}/{{ ansible_nodename }}-dh.pem"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - import_tasks: copy_single.yml
     vars:
@@ -15,4 +11,3 @@
       src: "{{ workdir }}/{{ ansible_nodename }}-dh.pem"
       dest: "{{ local_ca_dhparam.dest }}"
       tmpname: "dh-{{ ansible_nodename }}.pem"
-    when: not dhfile.stat.exists
