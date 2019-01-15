@@ -19,7 +19,7 @@
       delegate_to: "localhost"
 
     - name: Extract template
-      shell: tar -xf ../../ca.template -C secrets/pki/unittest
+      shell: tar -xf ../../files/ca.template.tar -C secrets/pki/unittest
       args:
         warn: false
       delegate_to: "localhost"
