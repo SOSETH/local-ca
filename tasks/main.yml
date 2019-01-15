@@ -1,5 +1,6 @@
 ---
-  - fail:
+  - name: Check for unconfigured call
+    fail:
       msg: "You need to set caname, see README.md"
     when: local_ca_caname is not defined
 
@@ -39,6 +40,8 @@
 
   - name: Extract tar archive
     command: tar xf /tmp/easyrsa.tar -C "{{ workdir }}"
+    args:
+      warn: false
     when: not castat.stat.exists
     delegate_to: "{{ local_ca_workhost }}"
 
