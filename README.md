@@ -7,9 +7,9 @@ delegated node) CA.
 
 | Variable name | Default value | Description |
 |---------------|---------------|-------------|
-| `local_ca_dhparam_size` | `4096` | Size for generated Diffie-Hellman parameters |
+| `local_ca_dhparam_size` | `2048` | Size for generated Diffie-Hellman parameters |
 | `local_ca_workhost` | `localhost` | The host to generate the CA on |
-| `local_ca_basepath` | undefined | Base directories of CAs on the remote host if `local_ca_is_local` is false |
+| `local_ca_basepath` | undefined | Base directories of CAs on the remote host if `local_ca_workhost` is defined |
 | `local_ca_fetchdir` | `fetch/ctmp` | Where to store secret material on the control node |
 | `local_ca_owner` | `root` | Owner of certificates on the target node |
 | `local_ca_group` | `root` | Group of certificates on the target node |

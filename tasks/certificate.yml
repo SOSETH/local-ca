@@ -13,7 +13,6 @@
       --req-cn="{{ local_ca_instance.cn }}"
       gen-req "{{ ansible_nodename }}-{{ local_ca_instance.cn }}"
       nopass
-
     args:
       chdir: "{{ workdir }}"
     when: (not ccrt.stat.exists) and (local_ca_instance.san is undefined)
@@ -27,7 +26,6 @@
       --subject-alt-name="{{ local_ca_instance.san }}"
       gen-req "{{ ansible_nodename }}-{{ local_ca_instance.cn }}"
       nopass
-
     args:
       chdir: "{{ workdir }}"
     when: (not ccrt.stat.exists) and (local_ca_instance.san is defined)
@@ -39,7 +37,6 @@
       --batch
       sign-req {{ local_ca_type }} "{{ ansible_nodename }}-{{ local_ca_instance.cn }}"
       nopass
-
     args:
       chdir: "{{ workdir }}"
     when: (not ccrt.stat.exists) and (local_ca_instance.san is undefined)
@@ -52,7 +49,6 @@
       --subject-alt-name="{{ local_ca_instance.san }}"
       sign-req {{ local_ca_type }} "{{ ansible_nodename }}-{{ local_ca_instance.cn}}"
       nopass
-
     args:
       chdir: "{{ workdir }}"
     when: (not ccrt.stat.exists) and (local_ca_instance.san is defined)
