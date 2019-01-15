@@ -33,3 +33,5 @@ verifier:
   name: testinfra
   lint:
     name: flake8
+    options:
+      max-line-length: 120
