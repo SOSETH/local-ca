@@ -23,7 +23,7 @@
       state: directory
     delegate_to: "{{ local_ca_workhost }}"
 
-  - name: Check if CA is initialized
+  - name: Check if CA exists
     stat:
       path: "{{ workdir }}/easyrsa"
     register: castat
@@ -46,14 +46,14 @@
     command: ./easyrsa init-pki
     args:
       chdir: "{{ workdir }}"
-    when: not castat.stat.exists
+      creates: "{{ workdir }}/pki"
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate CA certificate
     command: ./easyrsa --batch --req-cn="{{ local_ca_caname }} Ansible local PKI" build-ca nopass
     args:
       chdir: "{{ workdir }}"
-    when: not castat.stat.exists
+      creates: "{{ workdir }}/pki/ca.crt"
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Handle server certificate request
