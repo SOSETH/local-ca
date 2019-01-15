@@ -22,8 +22,11 @@ scenario:
     - create
     - prepare
     - converge
-    - idempotence
-#    - side_effect
+# At the moment, the idempotence check can't take into account control host
+# state. Therefore, the CA will be recreated (clean copy) and everything will
+# be regenerated, leading to failure
+#    - idempotence
+    - side_effect
     - verify
     - destroy
 verifier:
