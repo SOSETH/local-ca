@@ -8,6 +8,7 @@
         cert: "/tmp/dual.crt"
         key: "/tmp/dual.key"
         cn: "{{ ansible_fqdn }}"
-        san: "DNS:{{ ansible_nodename }},DNS:{{ ansible_fqdn }},IP:{{ansible_all_ipv4_addresses|join(',IP:')}},IP:127.0.0.1"
+        san: "DNS:{{ ansible_nodename }},DNS:{{ ansible_fqdn }},\
+          IP:{{ansible_all_ipv4_addresses|join(',IP:')}},IP:127.0.0.1"
       local_ca_ca:
         cert: "/tmp/ca.crt"

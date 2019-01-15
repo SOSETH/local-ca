@@ -1,0 +1,12 @@
+extends: default
+
+ignore: |
+  venv
+  virtenv
+
+rules:
+  truthy: disable
+  indentation: disable
+  line-length:
+    max: 120
+    level: warning

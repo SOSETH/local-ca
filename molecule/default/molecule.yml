@@ -15,18 +15,26 @@ provisioner:
 scenario:
   name: default
   test_sequence:
-#    - lint
+    - lint
     - destroy
-#    - dependency
+    #    - dependency
     - syntax
     - create
     - prepare
     - converge
-    - idempotence
-#    - side_effect
+    # At the moment, the idempotence check can't take into account control host
+    # state. Therefore, the CA will be recreated (clean copy) and everything will
+    # be regenerated, leading to failure
+    #    - idempotence
+    - side_effect
     - verify
     - destroy
 verifier:
   name: testinfra
   lint:
     name: flake8
+    options:
+      max-line-length: 120
+      exclude:
+        - venv
+        - virtenv

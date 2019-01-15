@@ -1,3 +1,4 @@
+---
 image: soseth/python-ci-base:stretch
 
 stages:
