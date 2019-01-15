@@ -3,20 +3,22 @@
     vars:
       name: "CA certificate"
       src: "{{ workdir }}/pki/ca.crt"
-      dest: "{{ ca.cert }}"
+      dest: "{{ local_ca_ca.cert }}"
       tmpname: "ca-{{ ansible_nodename }}.pem"
-    when: ca.cert is defined
+    when: local_ca_ca.cert is defined
 
   - name: Generate CRL
-    command: ./easyrsa gen-crl chdir="{{ workdir }}"
-    when: ca.crl is defined
+    command: ./easyrsa gen-crl
+    args:
+      chdir: "{{ workdir }}"
+    when: local_ca_ca.crl is defined
     changed_when: False
-    delegate_to: "{{ workhost }}"
+    delegate_to: "{{ local_ca_workhost }}"
 
   - import_tasks: copy_single.yml
     vars:
       name: "CRL"
       src: "{{ workdir }}/pki/crl.pem"
-      dest: "{{ ca.crl }}"
+      dest: "{{ local_ca_ca.crl }}"
       tmpname: "crl-{{ ansible_nodename }}.pem"
-    when: ca.crl is defined
+    when: local_ca_ca.crl is defined
