@@ -1,10 +1,10 @@
 ---
-# Call with variables:
-#
-# * `name`: The name of the files to copy
-# * `src`
-# * `dest`
-# * `tmpname`: Temporary name on the remote host
+  # Call with variables:
+  #
+  # * `name`: The name of the files to copy
+  # * `src`
+  # * `dest`
+  # * `tmpname`: Temporary name on the remote host
 
   - name: Copy {{ name }} to node
     become: True

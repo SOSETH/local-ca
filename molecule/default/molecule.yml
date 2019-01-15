@@ -15,17 +15,17 @@ provisioner:
 scenario:
   name: default
   test_sequence:
-#    - lint
+    - lint
     - destroy
-#    - dependency
+    #    - dependency
     - syntax
     - create
     - prepare
     - converge
-# At the moment, the idempotence check can't take into account control host
-# state. Therefore, the CA will be recreated (clean copy) and everything will
-# be regenerated, leading to failure
-#    - idempotence
+    # At the moment, the idempotence check can't take into account control host
+    # state. Therefore, the CA will be recreated (clean copy) and everything will
+    # be regenerated, leading to failure
+    #    - idempotence
     - side_effect
     - verify
     - destroy

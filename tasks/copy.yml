@@ -1,7 +1,7 @@
 ---
-# Call with variables:
-#
-# * `cert`: The base file name of the certificate to copy
+  # Call with variables:
+  #
+  # * `cert`: The base file name of the certificate to copy
 
   - name: Copy certificate to node
     become: True
