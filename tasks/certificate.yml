@@ -61,13 +61,17 @@
       -topk8
       -inform PEM
       -outform DER
-      -in "pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.key"
-      -out "pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.der"
-      "{% if local_ca_instance.format.password is defined %}-passout 'pass:{{ local_ca_instance.format.password }}'{% else %}-nocrypt{% endif %}"
+      -in pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.key
+      -out pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.der
+      {% if local_ca_instance.pkcs8.password is defined %}
+          -passout 'pass:{{ local_ca_instance.pkcs8.password }}'
+      {%- else %}
+          -nocrypt
+      {%- endif %}
     args:
       creates: "{{ workdir }}/pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.der"
       chdir: "{{ workdir }}"
-    when: local_ca_instance.format is defined and local_ca_instance.format.type == "pkcs8"
+    when: local_ca_instance.pkcs8 is defined
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate PKCS12 key file
@@ -78,14 +82,14 @@
       -in "pki/issued/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.crt"
       -inkey "pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.key"
       -out "pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.p12"
-      -name "{{ local_ca_instance.format.name }}"
-      -passout "pass:{{ local_ca_instance.format.password | default("") }}"
+      -name "{{ local_ca_instance.pkcs12.name }}"
+      -passout "pass:{{ local_ca_instance.pkcs12.password | default("") }}"
       -certfile pki/ca.crt
       -caname ca
     args:
       creates: "pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.p12"
       chdir: "{{ workdir }}"
-    when: local_ca_instance.format is defined and (local_ca_instance.format.type == "pkcs12" or local_ca_instance.format.type == "jks")
+    when: local_ca_instance.pkcs12 is defined
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate JKS key file
@@ -94,15 +98,15 @@
       -noprompt
       -importkeystore
       -srckeystore "pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.p12"
-      -srcstorepass "{{ local_ca_instance.format.password | default("") }}"
+      -srcstorepass "{{ local_ca_instance.jks.password | default("") }}"
       -srcstoretype PKCS12
       -destkeystore "pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.jks"
-      -deststorepass "{{ local_ca_instance.format.password | default("") }}"
+      -deststorepass "{{ local_ca_instance.jks.password | default("") }}"
       -deststoretype JKS
     args:
       creates: "pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.jks"
       chdir: "{{ workdir }}"
-    when: local_ca_instance.format is defined and local_ca_instance.format.type == "jks"
+    when: local_ca_instance.jks is defined
     delegate_to: "{{ local_ca_workhost }}"
     register: jks_import
 
@@ -114,49 +118,48 @@
       -file pki/ca.crt
       -alias ca
       -keystore "pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.jks"
-      -storepass "{{ local_ca_instance.format.password | default("") }}"
+      -storepass "{{ local_ca_instance.jks.password | default("") }}"
     args:
       chdir: "{{ workdir }}"
-    when: local_ca_instance.format is defined and local_ca_instance.format.type == "jks" and jks_import.changed
+    when: local_ca_instance.jks is defined and jks_import.changed
     delegate_to: "{{ local_ca_workhost }}"
 
   - import_tasks: copy_single.yml
-    when: local_ca_instance.key is defined
+    when: local_ca_instance.pem is defined and local_ca_instance.pem.key is defined
     vars:
       name: PEM Key
       src: "{{ workdir }}/pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.key"
-      dest: "{{ local_ca_instance.key }}"
+      dest: "{{ local_ca_instance.pem.key }}"
       tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}.key"
 
   - import_tasks: copy_single.yml
-    when: local_ca_instance.cert is defined
+    when: local_ca_instance.pem is defined and local_ca_instance.pem.cert
     vars:
       name: PEM Certificate
       src: "{{ workdir }}/pki/issued/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.crt"
-      dest: "{{ local_ca_instance.cert }}"
+      dest: "{{ local_ca_instance.pem.cert }}"
       tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}.crt"
 
   - import_tasks: copy_single.yml
-    when: local_ca_instance.format is defined and local_ca_instance.format.type == "pkcs8"
+    when: local_ca_instance.pkcs8 is defined
     vars:
       name: PKCS8 Key
       src: "{{ workdir }}/pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.der"
-      dest: "{{ local_ca_instance.format.path }}"
+      dest: "{{ local_ca_instance.pkcs8.path }}"
       tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}.der"
 
   - import_tasks: copy_single.yml
-    when: local_ca_instance.format is defined and local_ca_instance.format.type == "pkcs12"
+    when: local_ca_instance.pkcs12 is defined
     vars:
       name: PKCS12 Key
       src: "{{ workdir }}/pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.p12"
-      dest: "{{ local_ca_instance.format.path }}"
+      dest: "{{ local_ca_instance.pkcs12.path }}"
       tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}.p12"
 
   - import_tasks: copy_single.yml
-    when: local_ca_instance.format is defined and local_ca_instance.format.type == "jks"
+    when: local_ca_instance.jks is defined
     vars:
       name: JKS Key
       src: "{{ workdir }}/pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.jks"
-      dest: "{{ local_ca_instance.format.path }}"
+      dest: "{{ local_ca_instance.jks.path }}"
       tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}.jks"
-
