@@ -6,6 +6,15 @@
   # * `dest`
   # * `tmpname`: Temporary name on the remote host
 
+  - name: Create remote directory
+    become: True
+    file:
+      path: "{{ dest | dirname }}"
+      state: directory
+      owner: "{{ local_ca_owner }}"
+      group: "{{ local_ca_group }}"
+      mode: u+rwx
+
   - name: Copy {{ name }} to node
     become: True
     when: local_ca_is_local
@@ -24,9 +33,6 @@
       flat: yes
       validate_checksum: yes
       fail_on_missing: yes
-    with_items:
-      - crt
-      - key
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Upload {{ name }} to target node
@@ -35,3 +41,6 @@
     copy:
       src: "{{ local_ca_fetchdir }}/{{ tmpname }}"
       dest: "{{ dest }}"
+      owner: "{{ local_ca_owner }}"
+      group: "{{ local_ca_group }}"
+      mode: "{{ local_ca_mode }}"

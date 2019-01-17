@@ -5,10 +5,11 @@
     - role: local-ca
       local_ca_caname: unittest
       local_ca_both:
-        cert: "/tmp/dual.crt"
-        key: "/tmp/dual.key"
         cn: "{{ ansible_fqdn }}"
         san: "DNS:{{ ansible_nodename }},DNS:{{ ansible_fqdn }},\
           IP:{{ansible_all_ipv4_addresses|join(',IP:')}},IP:127.0.0.1"
+        pem:
+          cert: "/tmp/dual.crt"
+          key: "/tmp/dual.key"
       local_ca_ca:
         cert: "/tmp/ca.crt"
