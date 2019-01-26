@@ -4,22 +4,24 @@
   tasks:
     - name: Ensure CA is absent
       file:
-        path: "secrets/pki/unittest"
+        path: "/tmp/pki/unittest"
         state: absent
-      delegate_to: "localhost"
 
     - name: Create directories
       file:
         path: "{{ item }}"
         state: directory
       with_items:
-        - "secrets"
-        - "secrets/pki"
-        - "secrets/pki/unittest"
-      delegate_to: "localhost"
+        - "/tmp"
+        - "/tmp/pki"
+        - "/tmp/pki/unittest"
+
+    - name: Upload template
+      copy:
+        src: ca.template.tar
+        dest: /tmp/pki/ca.template.tar
 
     - name: Extract template
-      shell: tar -xf ../../files/ca.template.tar -C secrets/pki/unittest
+      shell: tar -xf /tmp/pki/ca.template.tar -C /tmp/pki/unittest
       args:
         warn: false
-      delegate_to: "localhost"
