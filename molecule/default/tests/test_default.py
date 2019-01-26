@@ -13,7 +13,8 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 # Check whether all files have been created at all
 def test_file_creation(host):
-    files = ['/tmp/ca.crt', '/tmp/dual.crt', '/tmp/dual.key']
+    files = ['/tmp/ca.crt', '/tmp/dual.crt', '/tmp/dual.key', '/tmp/server.crt', '/tmp/server.key',
+             '/tmp/client.crt', '/tmp/client.key']
     for item in files:
         f = host.file(item)
         assert f.exists
@@ -23,7 +24,7 @@ def test_file_creation(host):
 
 # Check whether the file contents are syntactically valid
 def test_file_validity(host):
-    certificates = ['/tmp/ca.crt', '/tmp/dual.crt']
+    certificates = ['/tmp/ca.crt', '/tmp/dual.crt', '/tmp/client.crt', '/tmp/server.crt']
     for item in certificates:
         contents = host.file(item).content_string.encode('ascii')
         cert = x509.load_pem_x509_certificate(contents, default_backend())
@@ -33,7 +34,7 @@ def test_file_validity(host):
         cert = x509.load_pem_x509_certificate(contents, default_backend())
         assert cert.serial_number >= 1
 
-    keys = ['/tmp/dual.key']
+    keys = ['/tmp/dual.key', '/tmp/client.key', '/tmp/server.key']
     for item in keys:
         contents = host.file(item).content_string.encode('ascii')
         key = serialization.load_pem_private_key(contents, None, default_backend())
@@ -49,6 +50,17 @@ def test_file_contents(host):
             'cert': '/tmp/dual.crt',
             'key': '/tmp/dual.key',
             'ekus': ['1.3.6.1.5.5.7.3.1', '1.3.6.1.5.5.7.3.2'],  # Both server and client authentication
+        },
+        {
+            'cert': '/tmp/server.crt',
+            'key': '/tmp/server.key',
+            'ekus': ['1.3.6.1.5.5.7.3.1'],  # server authentication
+        },
+
+        {
+            'cert': '/tmp/client.crt',
+            'key': '/tmp/client.key',
+            'ekus': ['1.3.6.1.5.5.7.3.2'],  # client authentication
         }
     ]
 
@@ -67,7 +79,10 @@ def test_file_contents(host):
         # Check extensions
         # OID 2.5.29.37 is extKeyUsage, should be server auth, client auth or both, depending on cert
         extended_key_usage = uut.extensions.get_extension_for_oid(ObjectIdentifier("2.5.29.37"))
-        assert extended_key_usage.value == ExtendedKeyUsage((map(lambda elem: ObjectIdentifier(elem), item['ekus'])))
+        expected_extended_key_usage = ExtendedKeyUsage((map(lambda elem: ObjectIdentifier(elem), item['ekus'])))
+        assert extended_key_usage.value == expected_extended_key_usage, \
+            "%s does not have expected EKU (actual: %s, expected %s)" % (item['cert'], extended_key_usage.value,
+                                                                         expected_extended_key_usage)
 
         # Check whether key matches cert
         uut_key_contents = host.file(item['key']).content_string.encode('ascii')

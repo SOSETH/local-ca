@@ -2,6 +2,14 @@
 language: python
 services: docker
 
+env:
+  matrix:
+    - MOLECULE_DISTRO: debian9
+      MOLECULE_PLAYBOOK: playbook-local.yml
+
+    - MOLECULE_DISTRO: debian9
+      MOLECULE_PLAYBOOK: playbook-remote.yml
+
 install:
   - pip install molecule docker-py
 
