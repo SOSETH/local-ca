@@ -11,5 +11,17 @@
         pem:
           cert: "/tmp/dual.crt"
           key: "/tmp/dual.key"
+      local_ca_client:
+        cn: "{{ ansible_fqdn }}-client"
+        pem:
+          cert: "/tmp/client.crt"
+          key: "/tmp/client.key"
+      local_ca_server:
+        cn: "{{ ansible_fqdn }}-server"
+        san: "DNS:{{ ansible_nodename }},DNS:{{ ansible_fqdn }},\
+          IP:{{ansible_all_ipv4_addresses|join(',IP:')}},IP:127.0.0.1"
+        pem:
+          cert: "/tmp/server.crt"
+          key: "/tmp/server.key"
       local_ca_ca:
         cert: "/tmp/ca.crt"
