@@ -22,6 +22,7 @@
     file:
       name: "{{ workdir }}"
       state: directory
+    check_mode: False
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Check if CA exists
@@ -36,6 +37,7 @@
       src: ca.template.tar
       dest: "/tmp/easyrsa.tar"
     when: not castat.stat.exists
+    check_mode: False
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Extract tar archive
@@ -43,6 +45,7 @@
     args:
       warn: false
     when: not castat.stat.exists
+    check_mode: False
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Init PKI
