@@ -29,6 +29,12 @@ where params consists of at least one of the following blocks:
 
 * `local_ca_server`: Generate a server certificate. Arguments:
   * `cn` (required): Common Name
+  * `c` (optional): country code (2-letters)
+  * `st` (optional): State/Province
+  * `city` (optional): City/Locality
+  * `email` (optional): Email addresses
+  * `ou` (optional): Organisational Unit
+  * `org` (optional): Organisation
   * `san` (optional): SAN in openssl cmdline format.
 
 * `local_ca_both`: Generate a server certificate that can also be used as a
@@ -41,6 +47,12 @@ where params consists of at least one of the following blocks:
 
 * `local_ca_client`: Generate a client certificate. Arguments:
   * `cn` (required): Common Name
+  * `c` (optional): country code (2-letters)
+  * `st` (optional): State/Province
+  * `city` (optional): City/Locality
+  * `email` (optional): Email addresses
+  * `ou` (optional): Organisational Unit
+  * `org` (optional): Organisation
 
 * `local_ca_dhparam`: Generate dhparam
   * `dest` (required): destination
