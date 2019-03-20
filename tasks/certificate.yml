@@ -6,11 +6,28 @@
     changed_when: False
     delegate_to: "{{ local_ca_workhost }}"
 
+  - name: Set certificate mode
+    set_fact:
+      local_ca_dn_mode: "{{ 'org' if
+        local_ca_instance.c is defined or
+        local_ca_instance.st is defined or
+        local_ca_instance.city is defined or
+        local_ca_instance.org is defined or
+        local_ca_instance.email is defined or
+        local_ca_instance.ou is defined else 'cn_only' }}"
+
   - name: Generate certificate request for this node
     command: >
       ./easyrsa
       --batch
-      --req-cn="{{ local_ca_instance.cn }}"
+      --dn-mode="{{ local_ca_dn_mode }}"
+      --req-cn="{{ local_ca_instance.cn | default("") }}"
+      --req-c="{{ local_ca_instance.c | default("") }}"
+      --req-st="{{ local_ca_instance.st | default("") }}"
+      --req-city="{{ local_ca_instance.city | default("") }}"
+      --req-org="{{ local_ca_instance.org | default("") }}"
+      --req-email="{{ local_ca_instance.email | default("") }}"
+      --req-ou="{{ local_ca_instance.ou | default("") }}"
       gen-req "{{ ansible_nodename }}-{{ local_ca_instance.cn }}"
       nopass
     args:
@@ -22,7 +39,14 @@
     command: >
       ./easyrsa
       --batch
-      --req-cn="{{ local_ca_instance.cn }}"
+      --dn-mode="{{ local_ca_dn_mode }}"
+      --req-cn="{{ local_ca_instance.cn | default("") }}"
+      --req-c="{{ local_ca_instance.c | default("") }}"
+      --req-st="{{ local_ca_instance.st | default("") }}"
+      --req-city="{{ local_ca_instance.city | default("") }}"
+      --req-org="{{ local_ca_instance.org | default("") }}"
+      --req-email="{{ local_ca_instance.email | default("") }}"
+      --req-ou="{{ local_ca_instance.ou | default("") }}"
       --subject-alt-name="{{ local_ca_instance.san }}"
       gen-req "{{ ansible_nodename }}-{{ local_ca_instance.cn }}"
       nopass
