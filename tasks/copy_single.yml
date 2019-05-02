@@ -34,6 +34,7 @@
       validate_checksum: yes
       fail_on_missing: yes
     delegate_to: "{{ local_ca_workhost }}"
+    changed_when: False
 
   - name: Upload {{ name }} to target node
     when: not local_ca_is_local
