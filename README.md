@@ -116,7 +116,7 @@ local_ca_server:
 An example invocation might look like this:
 
 ```
-  - hosts: mon-server
+  - hosts: mon_server
     roles:
       - role: local-ca
         local_ca_caname: icinga
