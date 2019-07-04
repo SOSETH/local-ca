@@ -11,7 +11,7 @@
   - name: Set work dir
     set_fact:
       workdir: "secrets/pki/{{ local_ca_caname }}"
-    when: local_ca_is_local
+    when: local_ca_is_local|bool
 
   - name: Set work dir
     set_fact:
