@@ -5,6 +5,7 @@
   # * `src`
   # * `dest`
   # * `tmpname`: Temporary name on the remote host
+  # * `changed_when`: Override changed_when condition of copy tasks
 
   - name: Create remote directory
     become: True
@@ -17,13 +18,24 @@
 
   - name: Copy {{ name }} to node
     become: True
-    when: local_ca_is_local|bool
+    when: local_ca_is_local and changed_when is not defined
     copy:
       src: "{{ src }}"
       dest: "{{ dest }}"
       owner: "{{ local_ca_owner }}"
       group: "{{ local_ca_group }}"
       mode: "{{ local_ca_mode }}"
+
+  - name: Copy {{ name }} to node
+    become: True
+    when: local_ca_is_local and changed_when is defined
+    copy:
+      src: "{{ src }}"
+      dest: "{{ dest }}"
+      owner: "{{ local_ca_owner }}"
+      group: "{{ local_ca_group }}"
+      mode: "{{ local_ca_mode }}"
+    changed_when: changed_when|bool
 
   - name: Fetch {{ name }} to control node
     when: not local_ca_is_local
@@ -37,7 +49,7 @@
     changed_when: False
 
   - name: Upload {{ name }} to target node
-    when: not local_ca_is_local
+    when: not local_ca_is_local and not ansible_check_mode and changed_when is not defined
     become: True
     copy:
       src: "{{ local_ca_fetchdir }}/{{ tmpname }}"
@@ -45,4 +57,14 @@
       owner: "{{ local_ca_owner }}"
       group: "{{ local_ca_group }}"
       mode: "{{ local_ca_mode }}"
-    when: not ansible_check_mode
+
+  - name: Upload {{ name }} to target node
+    when: not local_ca_is_local and not ansible_check_mode and changed_when is defined
+    become: True
+    copy:
+      src: "{{ local_ca_fetchdir }}/{{ tmpname }}"
+      dest: "{{ dest }}"
+      owner: "{{ local_ca_owner }}"
+      group: "{{ local_ca_group }}"
+      mode: "{{ local_ca_mode }}"
+    changed_when: changed_when|bool

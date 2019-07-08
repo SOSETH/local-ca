@@ -21,4 +21,5 @@
       src: "{{ workdir }}/pki/crl.pem"
       dest: "{{ local_ca_ca.crl }}"
       tmpname: "crl-{{ ansible_nodename }}.pem"
+      changed_when: False
     when: local_ca_ca.crl is defined
