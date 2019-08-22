@@ -78,6 +78,17 @@
     when: (not ccrt.stat.exists) and (local_ca_instance.san is defined)
     delegate_to: "{{ local_ca_workhost }}"
 
+  - name: Merge certificate to chain
+    shell: >
+      cat pki/issued/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.crt
+      pki/ca.crt
+      > pki/issued/{{ ansible_nodename }}-{{ local_ca_instance.cn }}-chain.crt
+    args:
+      chdir: "{{ workdir }}"
+      creates: pki/issued/{{ ansible_nodename }}-{{ local_ca_instance.cn }}-chain.crt
+    when: local_ca_instance.pem is defined and local_ca_instance.pem.chain is defined
+    delegate_to: "{{ local_ca_workhost }}"
+
   - name: Generate PKCS8 key file
     command: >
       openssl
@@ -157,12 +168,20 @@
       tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}.key"
 
   - import_tasks: copy_single.yml
-    when: local_ca_instance.pem is defined and local_ca_instance.pem.cert
+    when: local_ca_instance.pem is defined and local_ca_instance.pem.cert is defined
     vars:
       name: PEM Certificate
       src: "{{ workdir }}/pki/issued/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.crt"
       dest: "{{ local_ca_instance.pem.cert }}"
       tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}.crt"
+
+  - import_tasks: copy_single.yml
+    when: local_ca_instance.pem is defined and local_ca_instance.pem.chain
+    vars:
+      name: PEM Chain
+      src: "{{ workdir }}/pki/issued/{{ ansible_nodename }}-{{ local_ca_instance.cn }}-chain.crt"
+      dest: "{{ local_ca_instance.pem.chain }}"
+      tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}-chain.crt"
 
   - import_tasks: copy_single.yml
     when: local_ca_instance.pkcs8 is defined
