@@ -176,7 +176,7 @@
       tmpname: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}.crt"
 
   - import_tasks: copy_single.yml
-    when: local_ca_instance.pem is defined and local_ca_instance.pem.chain
+    when: local_ca_instance.pem is defined and local_ca_instance.pem.chain is defined
     vars:
       name: PEM Chain
       src: "{{ workdir }}/pki/issued/{{ ansible_nodename }}-{{ local_ca_instance.cn }}-chain.crt"
