@@ -62,6 +62,13 @@
       creates: "{{ workdir }}/pki/ca.crt"
     delegate_to: "{{ local_ca_workhost }}"
 
+  - name: Overwrite template
+    template:
+      src: openssl-1.0.cnf.j2
+      dest: "{{ workdir }}/openssl-1.0.cnf"
+    delegate_to: "{{ local_ca_workhost }}"
+    when: not castat.stat.exists
+
   - name: Handle server certificate request
     include_tasks: certificate.yml
     vars:
