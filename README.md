@@ -14,6 +14,7 @@ delegated node) CA.
 | `local_ca_owner` | `root` | Owner of certificates on the target node |
 | `local_ca_group` | `root` | Group of certificates on the target node |
 | `local_ca_mode` | `0640` | Permissions of certificates on the target node |
+| `local_ca_unique_subject` | `True` | Enforce unique CN names |
 
 ## How to use this?
 

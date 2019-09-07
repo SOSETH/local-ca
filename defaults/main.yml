@@ -5,3 +5,5 @@ local_ca_fetchdir: fetch/ctmp
 local_ca_owner: root
 local_ca_group: root
 local_ca_mode: 0640
+
+local_ca_unique_subject: True
