@@ -16,6 +16,14 @@ delegated node) CA.
 | `local_ca_mode` | `0640` | Permissions of certificates on the target node |
 | `local_ca_unique_subject` | `True` | Enforce unique CN names |
 
+
+### `local_ca_unique_subject`
+
+The value of the first execution of the role for a given CA is decisive.
+Subsequent runs with different value won't change the value of this
+configuration option. "Upgrading" an existing CA to allow non-unique names has
+to be done manually.
+
 ## How to use this?
 
 This role has to be called with parameters, like so:
