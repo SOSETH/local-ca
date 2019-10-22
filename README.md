@@ -78,9 +78,10 @@ Just copy the generated PEM files to the node:
 local_ca_server:
   ...
   pem:
-    key: /path/to/key       # Optional
-    cert: /path/to/cert     # Optional
-    chain: /path/to/chain   # Optional. Cert with CA cert appended
+    key: /path/to/key          # Optional
+    cert: /path/to/cert        # Optional
+    chain: /path/to/chain      # Optional. Cert with CA cert appended
+    keychain: /path/to/chain   # Optional. Cert with CA cert and key appended
 ```
 
 ### PKCS8
