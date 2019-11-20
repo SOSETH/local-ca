@@ -7,7 +7,7 @@
       local_ca_both:
         cn: "{{ ansible_fqdn }}"
         san: "DNS:{{ ansible_nodename }},DNS:{{ ansible_fqdn }},\
-          IP:{{ansible_all_ipv4_addresses|join(',IP:')}},IP:127.0.0.1"
+          IP:{{ ansible_all_ipv4_addresses|join(',IP:') }},IP:127.0.0.1"
         pem:
           cert: "/tmp/dual.crt"
           key: "/tmp/dual.key"
@@ -19,7 +19,7 @@
       local_ca_server:
         cn: "{{ ansible_fqdn }}-server"
         san: "DNS:{{ ansible_nodename }},DNS:{{ ansible_fqdn }},\
-          IP:{{ansible_all_ipv4_addresses|join(',IP:')}},IP:127.0.0.1"
+          IP:{{ ansible_all_ipv4_addresses|join(',IP:') }},IP:127.0.0.1"
         pem:
           cert: "/tmp/server.crt"
           key: "/tmp/server.key"
