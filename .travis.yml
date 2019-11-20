@@ -10,6 +10,12 @@ env:
     - MOLECULE_DISTRO: debian9
       MOLECULE_PLAYBOOK: playbook-remote.yml
 
+    - MOLECULE_DISTRO: debian10
+      MOLECULE_PLAYBOOK: playbook-local.yml
+
+    - MOLECULE_DISTRO: debian10
+      MOLECULE_PLAYBOOK: playbook-remote.yml
+
 install:
   - pip install molecule docker-py
 
