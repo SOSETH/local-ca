@@ -25,9 +25,6 @@ scenario:
     - create
     - prepare
     - converge
-    # At the moment, the idempotence check can't take into account control host
-    # state. Therefore, the CA will be recreated (clean copy) and everything will
-    # be regenerated, leading to failure
     - idempotence
     - verify
     - destroy
