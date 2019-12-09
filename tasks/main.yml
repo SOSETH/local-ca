@@ -52,14 +52,14 @@
     command: ./easyrsa init-pki
     args:
       chdir: "{{ workdir }}"
-      creates: "{{ workdir }}/pki"
+      creates: "pki"
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate CA certificate
     command: ./easyrsa --batch --req-cn="{{ local_ca_caname }} Ansible local PKI" build-ca nopass
     args:
       chdir: "{{ workdir }}"
-      creates: "{{ workdir }}/pki/ca.crt"
+      creates: "pki/ca.crt"
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Overwrite template

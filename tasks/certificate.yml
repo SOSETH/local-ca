@@ -116,7 +116,7 @@
           -nocrypt
       {%- endif %}
     args:
-      creates: "{{ workdir }}/pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.der"
+      creates: "pki/private/{{ ansible_nodename }}-{{ local_ca_instance.cn }}.der"
       chdir: "{{ workdir }}"
     when: local_ca_instance.pkcs8 is defined
     delegate_to: "{{ local_ca_workhost }}"
