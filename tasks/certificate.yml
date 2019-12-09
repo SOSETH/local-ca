@@ -71,7 +71,7 @@
       ./easyrsa
       --batch
       --subject-alt-name="{{ local_ca_instance.san }}"
-      sign-req {{ local_ca_type }} "{{ ansible_nodename }}-{{ local_ca_instance.cn}}"
+      sign-req {{ local_ca_type }} "{{ ansible_nodename }}-{{ local_ca_instance.cn }}"
       nopass
     args:
       chdir: "{{ workdir }}"
@@ -170,6 +170,7 @@
       chdir: "{{ workdir }}"
     when: local_ca_instance.jks is defined and jks_import.changed
     delegate_to: "{{ local_ca_workhost }}"
+    tags: skip_ansible_lint
 
   - import_tasks: copy_single.yml
     when: local_ca_instance.pem is defined and local_ca_instance.pem.key is defined
