@@ -15,6 +15,7 @@ delegated node) CA.
 | `local_ca_group` | `root` | Group of certificates on the target node |
 | `local_ca_mode` | `0640` | Permissions of certificates on the target node |
 | `local_ca_unique_subject` | `True` | Enforce unique CN names |
+| `local_ca_kerberos_realm` | `EXAMPLE.ORG` | If generating Kerberos certificates, which realm are they for? |
 
 
 ### `local_ca_unique_subject`
@@ -23,6 +24,14 @@ The value of the first execution of the role for a given CA is decisive.
 Subsequent runs with different value won't change the value of this
 configuration option. "Upgrading" an existing CA to allow non-unique names has
 to be done manually.
+
+### `local_ca_kerberos_realm`
+This has the same update limitation as `local_ca_unique_subject`. If you're not
+using kerberos anyways, you can ignore this setting as it is only used for the
+`kerberos-kdc` and `kerberos-client` certificate types. The certificate is
+generated to the specification from the [official documentation](https://web.mit.edu/kerberos/krb5-1.13/doc/admin/pkinit.html).
+For the moment, user certificates have to be generated manually on the server
+(certificate type `kerberos-user`).
 
 ## How to use this?
 
@@ -62,6 +71,10 @@ where params consists of at least one of the following blocks:
   * `email` (optional): Email addresses
   * `ou` (optional): Organisational Unit
   * `org` (optional): Organisation
+
+* `local_ca_kdc`: Generate a kerberos KDC certificate which includes the
+  mandatory eku fields. Arguments:
+  * `cn` (required): Common Name
 
 * `local_ca_dhparam`: Generate dhparam
   * `dest` (required): destination

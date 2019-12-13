@@ -62,10 +62,14 @@
       creates: "pki/ca.crt"
     delegate_to: "{{ local_ca_workhost }}"
 
-  - name: Overwrite template
+  - name: Apply templates
     template:
       src: openssl-1.0.cnf.j2
       dest: "{{ workdir }}/openssl-1.0.cnf"
+    with_items:
+      - openssl-1.0.cnf.j2
+      - x509-types/kerberos-kdc
+      - x509-types/kerberos-user
     delegate_to: "{{ local_ca_workhost }}"
     when: not castat.stat.exists
 
@@ -89,6 +93,13 @@
       - local_ca_instance: "{{ local_ca_both }}"
       - local_ca_type: both
     when: local_ca_both is defined
+
+  - name: Handle Kerberos KDC certificate request
+    include_tasks: certificate.yml
+    vars:
+      - local_ca_instance: "{{ local_ca_kdc }}"
+      - local_ca_type: kerberos-kdc
+    when: local_ca_kdc is defined
 
   - name: Handle DH parameters request
     include_tasks: dhparam.yml
