@@ -54,6 +54,8 @@ where params consists of at least one of the following blocks:
   * `ou` (optional): Organisational Unit
   * `org` (optional): Organisation
   * `san` (optional): SAN in openssl cmdline format.
+  * `unique` (optional): A CA-unique identifier to distinguish certificates with
+    the same CN.
 
 * `local_ca_both`: Generate a server certificate that can also be used as a
   client certificate. Parameters are the same as `local_ca_server`.
@@ -71,6 +73,8 @@ where params consists of at least one of the following blocks:
   * `email` (optional): Email addresses
   * `ou` (optional): Organisational Unit
   * `org` (optional): Organisation
+  * `unique` (optional): A CA-unique identifier to distinguish certificates with
+    the same CN.
 
 * `local_ca_kdc`: Generate a kerberos KDC certificate which includes the
   mandatory eku fields. Arguments:

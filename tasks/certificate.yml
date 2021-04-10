@@ -1,7 +1,7 @@
 ---
   - name: Set file base name
     set_fact:
-      local_ca_file_base: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}"
+      local_ca_file_base: "{{ ansible_nodename }}-{{ local_ca_instance.cn }}{% if local_ca_instance.unique is defined %}-{{ local_ca_instance.unique }}{% endif %}"
 
   - name: Check if node certificate exists
     stat:
