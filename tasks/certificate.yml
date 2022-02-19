@@ -133,14 +133,14 @@
       -in "pki/issued/{{ local_ca_file_base }}.crt"
       -inkey "pki/private/{{ local_ca_file_base }}.key"
       -out "pki/private/{{ local_ca_file_base }}.p12"
-      -name "{{ local_ca_instance.pkcs12.name }}"
+      -name "{{ local_ca_instance.pkcs12.name | default(local_ca_instance.jks.name) | default("") }}"
       -passout "pass:{{ local_ca_instance.pkcs12.password | default("") }}"
       -certfile pki/ca.crt
       -caname ca
     args:
       creates: "pki/private/{{ local_ca_file_base }}.p12"
       chdir: "{{ workdir }}"
-    when: local_ca_instance.pkcs12 is defined
+    when: local_ca_instance.pkcs12 is defined or local_ca_instance.jks is defined
     delegate_to: "{{ local_ca_workhost }}"
 
   - name: Generate JKS key file
@@ -149,11 +149,14 @@
       -noprompt
       -importkeystore
       -srckeystore "pki/private/{{ local_ca_file_base }}.p12"
-      -srcstorepass "{{ local_ca_instance.jks.password | default("") }}"
+      -srcstorepass "{{ local_ca_instance.pkcs12.password | default("") }}"
       -srcstoretype PKCS12
       -destkeystore "pki/private/{{ local_ca_file_base }}.jks"
-      -deststorepass "{{ local_ca_instance.jks.password | default("") }}"
+      -deststorepass "{{ local_ca_instance.jks.storepassword | default(local_ca_instance.jks.password) | default("") }}"
       -deststoretype JKS
+      {% if local_ca_instance.jks.keypassword is defined %}
+      -destkeypass "{{ local_ca_instance.jks.keypassword }}"
+      {%- endif -%}
     args:
       creates: "pki/private/{{ local_ca_file_base }}.jks"
       chdir: "{{ workdir }}"
@@ -169,7 +172,7 @@
       -file pki/ca.crt
       -alias ca
       -keystore "pki/private/{{ local_ca_file_base }}.jks"
-      -storepass "{{ local_ca_instance.jks.password | default("") }}"
+      -storepass "{{ local_ca_instance.jks.storepassword | default(local_ca_instance.jks.password) | default("") }}"
     args:
       chdir: "{{ workdir }}"
     when: local_ca_instance.jks is defined and jks_import.changed

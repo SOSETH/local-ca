@@ -136,9 +136,11 @@ achieve this specify:
 local_ca_server:
   ...
   jks:
-    password: changeme
+    password: changeme          # DEPRECATED: Use storepassword instead
+    storepassword: changeme
     name: my-key                # name of the keypair inside the container
     path: /path/on/target/node
+    keypassword: changeme       # optional. If missing, key is not encrypted
 ```
 
 An example invocation might look like this:
