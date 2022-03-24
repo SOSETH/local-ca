@@ -8,6 +8,14 @@
     set_fact:
       local_ca_is_local: "{{ local_ca_workhost == 'localhost' }}"
 
+  - name: Check local target
+    set_fact:
+      local_ca_is_to_local: "{{ inventory_hostname == 'local' }}"
+
+  - name: Check local target user
+    set_fact:
+      local_ca_is_to_local_same_user: "{{ local_ca_is_to_local and local_ca_owner == ansible_user_id and local_ca_group == ansible_user_gid }}"
+
   - name: Set work dir
     set_fact:
       workdir: "secrets/pki/{{ local_ca_caname }}"
