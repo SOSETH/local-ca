@@ -56,7 +56,7 @@ issued. `crl` controls validity of Certificate Revokation Lists.
 
 This role has to be called with parameters, like so:
 
-```
+```yml
   - role: local-ca
     local_ca_caname: DemoPKI
     <params>
@@ -110,7 +110,7 @@ workhost. Supported formats are:
 
 Just copy the generated PEM files to the node:
 
-```
+```yml
 local_ca_server:
   ...
   pem:
@@ -124,7 +124,7 @@ local_ca_server:
 
 Wrap the private key into a DER PKCS8 container. To achieve this specify
 
-```
+```yml
 local_ca_server:
   ...
   pkcs8:
@@ -137,7 +137,7 @@ local_ca_server:
 Wrap private key, certificate and CA certificate into a PKCS12 container. To
 achieve this specify:
 
-```
+```yml
 local_ca_server:
   ...
   pkcs12:
@@ -151,7 +151,7 @@ local_ca_server:
 Wrap private key, certificate and CA certificate into an JKS container. To
 achieve this specify:
 
-```
+```yml
 local_ca_server:
   ...
   jks:
@@ -164,7 +164,7 @@ local_ca_server:
 
 An example invocation might look like this:
 
-```
+```yml
   - hosts: mon_server
     roles:
       - role: local-ca
