@@ -16,6 +16,7 @@ delegated node) CA.
 | `local_ca_mode` | `0640` | Permissions of certificates on the target node |
 | `local_ca_unique_subject` | `True` | Enforce unique CN names |
 | `local_ca_kerberos_realm` | `EXAMPLE.ORG` | If generating Kerberos certificates, which realm are they for? |
+| `local_ca_expiry_days` | - | How many days certificates should be valid before they expire |
 
 
 ### `local_ca_unique_subject`
@@ -26,12 +27,30 @@ configuration option. "Upgrading" an existing CA to allow non-unique names has
 to be done manually.
 
 ### `local_ca_kerberos_realm`
+
 This has the same update limitation as `local_ca_unique_subject`. If you're not
 using kerberos anyways, you can ignore this setting as it is only used for the
 `kerberos-kdc` and `kerberos-client` certificate types. The certificate is
 generated to the specification from the [official documentation](https://web.mit.edu/kerberos/krb5-1.13/doc/admin/pkinit.html).
 For the moment, user certificates have to be generated manually on the server
 (certificate type `kerberos-user`).
+
+### `local_ca_expiry_days`
+
+Define how many days different issued entities are valid. Example:
+
+```yml
+local_ca_expiry_days:
+  ca: 10
+  cert: 10
+  cert_renew: 10
+  crl: 10
+```
+
+`ca` controls validity of the root CA certificate. `cert` controls validity of
+issued server / client certificates issued by the CA. `cert_renew` controls how
+short before a certificate's expiry a new certificate for that entity may be
+issued. `crl` controls validity of Certificate Revokation Lists.
 
 ## How to use this?
 
