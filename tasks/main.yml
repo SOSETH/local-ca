@@ -48,6 +48,13 @@
     check_mode: False
     delegate_to: "{{ local_ca_workhost }}"
 
+  - name: Configure easyrsa
+    template:
+      src: vars.j2
+      dest: "{{ workdir }}/vars"
+    delegate_to: "{{ local_ca_workhost }}"
+    when: not castat.stat.exists
+
   - name: Init PKI
     command: ./easyrsa init-pki
     args:
@@ -68,8 +75,6 @@
       dest: "{{ workdir }}/openssl-1.0.cnf"
     with_items:
       - openssl-1.0.cnf.j2
-      - x509-types/kerberos-kdc
-      - x509-types/kerberos-user
     delegate_to: "{{ local_ca_workhost }}"
     when: not castat.stat.exists
 
