@@ -73,6 +73,16 @@
     delegate_to: "{{ local_ca_workhost }}"
     when: not castat.stat.exists
 
+  - name: Configure extra kerberos certificate types
+    when: (not castat.stat.exists) and (local_ca_kerberos_realm != "EXAMPLE.ORG")
+    template:
+      src: "{{ item }}.j2"
+      dest: "{{ workdir }}/x509-types/{{ item }}"
+    delegate_to: "{{ local_ca_workhost }}"
+    with_items:
+      - kerberos-kdc
+      - kerberos-user
+
   - name: Init PKI
     command: ./easyrsa init-pki
     args:
