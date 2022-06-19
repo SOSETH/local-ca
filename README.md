@@ -5,18 +5,19 @@ delegated node) CA.
 
 ## Configuration
 
-| Variable name | Default value | Description |
-|---------------|---------------|-------------|
-| `local_ca_dhparam_size` | `2048` | Size for generated Diffie-Hellman parameters |
-| `local_ca_workhost` | `localhost` | The host to generate the CA on |
-| `local_ca_basepath` | undefined | Base directories of CAs on the remote host if `local_ca_workhost` is defined |
-| `local_ca_fetchdir` | `fetch/ctmp` | Where to store secret material on the control node |
-| `local_ca_owner` | `root` | Owner of certificates on the target node |
-| `local_ca_group` | `root` | Group of certificates on the target node |
-| `local_ca_mode` | `0640` | Permissions of certificates on the target node |
-| `local_ca_unique_subject` | `True` | Enforce unique CN names |
-| `local_ca_kerberos_realm` | `EXAMPLE.ORG` | If generating Kerberos certificates, which realm are they for? |
-| `local_ca_expiry_days` | - | How many days certificates should be valid before they expire |
+| Variable name               | Default value  | Description                                                                  |
+|-----------------------------|----------------|------------------------------------------------------------------------------|
+| `local_ca_dhparam_size`     | `2048`         | Size for generated Diffie-Hellman parameters                                 |
+| `local_ca_workhost`         | `localhost`    | The host to generate the CA on                                               |
+| `local_ca_basepath`         | undefined      | Base directories of CAs on the remote host if `local_ca_workhost` is defined |
+| `local_ca_fetchdir`         | `fetch/ctmp`   | Where to store secret material on the control node                           |
+| `local_ca_owner`            | `root`         | Owner of certificates on the target node                                     |
+| `local_ca_group`            | `root`         | Group of certificates on the target node                                     |
+| `local_ca_mode`             | `0640`         | Permissions of certificates on the target node                               |
+| `local_ca_unique_subject`   | `True`         | Enforce unique CN names                                                      |
+| `local_ca_kerberos_realm`   | `EXAMPLE.ORG`  | If generating Kerberos certificates, which realm are they for?               |
+| `local_ca_expiry_days`      | -              | How many days certificates should be valid before they expire (see below)    |
+| `local_ca_skip_octal_check` | `False`        | Whether to allow file modes 416, 493, 488 and 420                            |
 
 
 ### `local_ca_unique_subject`

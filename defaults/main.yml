@@ -4,7 +4,7 @@ local_ca_workhost: localhost
 local_ca_fetchdir: fetch/ctmp
 local_ca_owner: root
 local_ca_group: root
-local_ca_mode: 0640
+local_ca_mode: '0640'
 local_ca_expiry_days:
   ca: 3650
   cert: 3650
@@ -14,3 +14,4 @@ local_ca_expiry_days:
 local_ca_unique_subject: True
 
 local_ca_kerberos_realm: "EXAMPLE.ORG"
+local_ca_skip_octal_check: False

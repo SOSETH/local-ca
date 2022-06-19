@@ -4,6 +4,16 @@
       msg: "You need to set caname, see README.md"
     when: local_ca_caname is not defined
 
+  # We used to allow unquoted values for the file mode. The problem is that leading zeros lead to the values being
+  # interpreted as octal, which is now impossible to avoid in 2.12+ (or so it appears).
+  # For now, check if local_ca_mode looks like one of the commonly used values after conversion and bail out if that is
+  # the case!
+  - name: Check for legacy mode call
+    fail:
+      msg: "local_ca_mode needs to be a string to avoid octal conversion!"
+    # 640, 755, 750, 644
+    when: local_ca_mode in [416, 493, 488, 420] and not local_ca_skip_octal_check
+
   - name: Check local execution
     set_fact:
       local_ca_is_local: "{{ local_ca_workhost == 'localhost' }}"
