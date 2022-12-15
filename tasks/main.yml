@@ -60,8 +60,6 @@
 
   - name: Extract tar archive
     command: tar xf /tmp/easyrsa.tar -C "{{ workdir }}"
-    args:
-      warn: false
     when: not castat.stat.exists
     check_mode: False
     delegate_to: "{{ local_ca_workhost }}"
