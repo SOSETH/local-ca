@@ -21,7 +21,10 @@ crl		= $dir/crl.pem 		# The current CRL
 private_key	= $dir/private/ca.key	# The private key
 RANDFILE	= $dir/.rand		# private random number file
 
-x509_extensions	= basic_exts		# The extentions to add to the cert
+x509_extensions	= basic_exts		# The extensions to add to the cert
+
+# A placeholder to handle the --copy-ext feature:
+#%COPY_EXTS%	# Do NOT remove or change this line as --copy-ext support requires it
 
 # This allows a V2 CRL. Ancient browsers don't like it, but anything Easy-RSA
 # is designed for will. In return, we get the Issuer attached to CRLs.
@@ -32,11 +35,13 @@ default_crl_days= $ENV::EASYRSA_CRL_DAYS	# how long before next CRL
 default_md	= $ENV::EASYRSA_DIGEST		# use public key default MD
 preserve	= no			# keep passed DN ordering
 
-# A few difference way of specifying how similar the request should look
+# This allows to renew certificates which have not been revoked
+unique_subject	= {{ "yes" if local_ca_unique_subject else "no" }}
+
+# A few different ways of specifying how similar the request should look
 # For type CA, the listed attributes must be the same, and the optional
 # and supplied fields are just that :-)
 policy		= policy_anything
-unique_subject = {{ "yes" if local_ca_unique_subject else "no" }}
 
 # For the 'anything' policy, which defines allowed DN fields
 [ policy_anything ]
@@ -46,18 +51,18 @@ localityName		= optional
 organizationName	= optional
 organizationalUnitName	= optional
 commonName		= supplied
-name			= optional
 emailAddress		= optional
+serialNumber	= optional
 
 ####################################################################
 # Easy-RSA request handling
 # We key off $DN_MODE to determine how to format the DN
 [ req ]
 default_bits		= $ENV::EASYRSA_KEY_SIZE
-default_keyfile 	= privkey.pem
+default_keyfile	= privkey.pem
 default_md		= $ENV::EASYRSA_DIGEST
 distinguished_name	= $ENV::EASYRSA_DN
-x509_extensions		= easyrsa_ca	# The extentions to add to the self signed cert
+x509_extensions		= easyrsa_ca	# The extensions to add to the self signed cert
 
 # A placeholder to handle the $EXTRA_EXTS feature:
 #%EXTRA_EXTS%	# Do NOT remove or change this line as $EXTRA_EXTS support requires it
@@ -98,6 +103,9 @@ emailAddress			= Email Address
 emailAddress_default		= $ENV::EASYRSA_REQ_EMAIL
 emailAddress_max		= 64
 
+serialNumber		= Serial-number (eg, device serial-number)
+serialNumber_default	= $ENV::EASYRSA_REQ_SERIAL
+
 ####################################################################
 # Easy-RSA cert extension handling
 
@@ -128,6 +136,9 @@ keyUsage = cRLSign, keyCertSign
 # nsCertType omitted by default. Let's try to let the deprecated stuff die.
 # nsCertType = sslCA
 
+# A placeholder to handle the $X509_TYPES and CA extra extensions $EXTRA_EXTS:
+#%CA_X509_TYPES_EXTRA_EXTS%	# Do NOT remove or change this line as $X509_TYPES and EXTRA_EXTS demands it
+
 # CRL extensions.
 [ crl_ext ]
 
@@ -135,3 +146,4 @@ keyUsage = cRLSign, keyCertSign
 
 # issuerAltName=issuer:copy
 authorityKeyIdentifier=keyid:always,issuer:always
+

@@ -3,6 +3,11 @@
 This role provides a local (i.e. on the node that executes ansible or on some
 delegated node) CA.
 
+Warning: Commits after 0b2beb3015658c9f3fdeb9a1e92944d032b493ef use EasyRSA 3.x, which puts the configuration in a different
+location. Existing CAs will continue to work, but changing any of the CA parameters (`unique_subject`, `kerberos_realm` etc)
+will have no effect! You will need to manually upgrade your CAs (by extracting the template over them) to make use of the
+new configuration!
+
 ## Configuration
 
 | Variable name               | Default value  | Description                                                                  |

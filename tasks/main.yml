@@ -97,10 +97,10 @@
 
   - name: Apply templates
     template:
-      src: openssl-1.0.cnf.j2
-      dest: "{{ workdir }}/openssl-1.0.cnf"
+      src: openssl-easyrsa.cnf.j2
+      dest: "{{ workdir }}/openssl-easyrsa.cnf"
     with_items:
-      - openssl-1.0.cnf.j2
+      - openssl-easyrsa.cnf.j2
     delegate_to: "{{ local_ca_workhost }}"
     when: not castat.stat.exists
 
